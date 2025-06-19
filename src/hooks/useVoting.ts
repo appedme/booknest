@@ -3,7 +3,11 @@
 import { useState, useCallback } from 'react';
 import { useAuth } from './useAuth';
 
-export function useVoting() {
+interface UseVotingProps {
+  onVoteSuccess?: () => void;
+}
+
+export function useVoting({ onVoteSuccess }: UseVotingProps = {}) {
   const [votingStates, setVotingStates] = useState<Record<number, boolean>>({});
   const { isAuthenticated, login } = useAuth();
 
@@ -29,15 +33,15 @@ export function useVoting() {
         throw new Error('Failed to vote');
       }
 
-      // Refresh the page to show updated vote counts
-      window.location.reload();
+      // Call the success callback instead of reloading
+      onVoteSuccess?.();
     } catch (error) {
       console.error('Error voting:', error);
       alert('Failed to vote. Please try again.');
     } finally {
       setVotingStates(prev => ({ ...prev, [bookId]: false }));
     }
-  }, [isAuthenticated, login]);
+  }, [isAuthenticated, login, onVoteSuccess]);
 
   return {
     vote,

@@ -13,6 +13,31 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Book ID is required" }, { status: 400 });
     }
 
+    // In development mode, return mock comments
+    if (process.env.NODE_ENV === 'development') {
+      const mockComments = [
+        {
+          id: 1,
+          bookId: parseInt(bookId),
+          userId: null,
+          authorName: "Book Lover",
+          content: "Great book! Really enjoyed reading it.",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: 2,
+          bookId: parseInt(bookId),
+          userId: null,
+          authorName: "Avid Reader",
+          content: "Interesting story and well-written characters.",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }
+      ];
+      return NextResponse.json({ comments: mockComments });
+    }
+
     const db = getDB();
     const bookComments = await db.select()
       .from(comments)
@@ -48,11 +73,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // In development mode, return mock success
+    if (process.env.NODE_ENV === 'development') {
+      const mockComment = {
+        id: Date.now(),
+        bookId,
+        userId: null,
+        authorName: username || "Anonymous",
+        content,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      console.log('Development mode: Comment created successfully', mockComment);
+      return NextResponse.json(mockComment, { status: 201 });
+    }
+
     const db = getDB();
     const newComment = await db.insert(comments).values({
       bookId,
       userId: null, // For anonymous comments
-      username: username || "Anonymous",
+      authorName: username || "Anonymous",
       content,
     }).returning();
 

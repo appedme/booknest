@@ -12,10 +12,11 @@ import { useVoting } from "@/hooks/useVoting";
 interface BookCardProps {
   book: Book;
   onComment?: (bookId: number) => void;
+  onVoteSuccess?: () => void;
 }
 
-export function BookCard({ book, onComment }: BookCardProps) {
-  const { vote, isVoting } = useVoting();
+export function BookCard({ book, onComment, onVoteSuccess }: BookCardProps) {
+  const { vote, isVoting } = useVoting({ onVoteSuccess });
 
   const handleVote = (voteType: 'upvote' | 'downvote') => {
     vote(book.id, voteType);
