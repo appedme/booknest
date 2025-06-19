@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDB } from "@/lib/db";
-import { books, votes } from "@/lib/schema";
+import { books, votes, comments } from "@/lib/schema";
 import { desc, eq, sql, and } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import type { User } from "@/types";
@@ -55,10 +55,15 @@ export async function GET(request: NextRequest) {
           .from(votes)
           .where(and(eq(votes.bookId, book.id), eq(votes.voteType, "downvote")));
 
+        const bookComments = await db.select()
+          .from(comments)
+          .where(eq(comments.bookId, book.id));
+
         return {
           ...book,
           upvotes: upvoteCount.length,
           downvotes: downvoteCount.length,
+          comments: bookComments,
         };
       })
     );

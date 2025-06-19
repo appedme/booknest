@@ -101,7 +101,7 @@ export function BookCard({ book, onComment, onVoteSuccess }: BookCardProps) {
                 ) : (
                   <ThumbsUp className="h-4 w-4 mr-1" />
                 )}
-                <span className="text-xs font-medium">{book.upvotes}</span>
+                <span className="text-xs font-medium">{book.upvotes || 0}</span>
               </Button>
               <Button
                 variant="ghost"
@@ -115,7 +115,7 @@ export function BookCard({ book, onComment, onVoteSuccess }: BookCardProps) {
                 ) : (
                   <ThumbsDown className="h-4 w-4 mr-1" />
                 )}
-                <span className="text-xs font-medium">{book.downvotes}</span>
+                <span className="text-xs font-medium">{book.downvotes || 0}</span>
               </Button>
             </div>
 
@@ -127,7 +127,7 @@ export function BookCard({ book, onComment, onVoteSuccess }: BookCardProps) {
               onClick={handleComment}
             >
               <MessageCircle className="h-4 w-4 mr-1" />
-              <span className="text-xs">{book.comments.length}</span>
+              <span className="text-xs">{book.comments?.length || 0}</span>
             </Button>
           </div>
 

@@ -155,7 +155,7 @@ export default function DashboardPage() {
                             </CardHeader>
                             <CardContent>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <AddBookDialog onBookAdded={() => mutate()}>
+                                    <Link href="/create">
                                         <Button variant="outline" className="w-full justify-start gap-2 h-auto p-4">
                                             <Plus className="h-5 w-5" />
                                             <div className="text-left">
@@ -163,7 +163,7 @@ export default function DashboardPage() {
                                                 <div className="text-sm text-muted-foreground">Share your favorite read</div>
                                             </div>
                                         </Button>
-                                    </AddBookDialog>
+                                    </Link>
 
                                     <Link href="/">
                                         <Button variant="outline" className="w-full justify-start gap-2 h-auto p-4">

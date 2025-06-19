@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -29,10 +30,12 @@ import { requireAuth } from "@/utils/auth";
 
 interface AddBookDialogProps {
   onBookAdded?: () => void;
+  redirectToDashboard?: boolean;
   children?: React.ReactNode;
 }
 
-export function AddBookDialog({ onBookAdded, children }: AddBookDialogProps) {
+export function AddBookDialog({ onBookAdded, redirectToDashboard = false, children }: AddBookDialogProps) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<BookFormData>({
@@ -73,6 +76,10 @@ export function AddBookDialog({ onBookAdded, children }: AddBookDialogProps) {
       });
       setOpen(false);
       onBookAdded?.();
+      
+      if (redirectToDashboard) {
+        router.push('/dashboard');
+      }
     } catch (error) {
       console.error('Error adding book:', error);
       alert(error instanceof Error ? error.message : 'Failed to add book. Please try again.');

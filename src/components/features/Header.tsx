@@ -54,6 +54,12 @@ export function Header() {
             Dashboard
           </Link>
           <Link
+            href="/create"
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+          >
+            Add Book
+          </Link>
+          <Link
             href="/genres"
             className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
           >
