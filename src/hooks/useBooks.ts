@@ -28,10 +28,15 @@ export function useBooks(): UseBooksReturn {
         throw new Error('Failed to fetch books');
       }
 
-      const data: Book[] = await response.json();
-      setBooks(data);
+      const data = await response.json();
+      
+      // Ensure data is an array
+      const booksArray = Array.isArray(data) ? data : [];
+      setBooks(booksArray);
     } catch (err) {
+      console.error('Error fetching books:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch books');
+      setBooks([]); // Set empty array on error
     } finally {
       setIsLoading(false);
     }

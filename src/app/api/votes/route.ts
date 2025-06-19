@@ -26,15 +26,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // In development mode, return a mock success response
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`Development mode: ${voteType} for book ${bookId}`);
-      return NextResponse.json({ 
-        success: true, 
-        message: `${voteType} recorded successfully (dev mode)` 
-      });
-    }
-
     // Get client IP for anonymous voting
     const forwarded = request.headers.get("x-forwarded-for");
     const ip = forwarded ? forwarded.split(",")[0] : request.headers.get("x-real-ip") || "127.0.0.1";

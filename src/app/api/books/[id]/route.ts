@@ -16,41 +16,6 @@ export async function GET(
       return NextResponse.json({ error: "Invalid book ID" }, { status: 400 });
     }
 
-    // In development mode, return mock data
-    if (process.env.NODE_ENV === 'development') {
-      const mockBook = {
-        id: bookId,
-        title: `Sample Book ${bookId}`,
-        author: "Development Author",
-        genre: "Fiction",
-        description: "This is a sample book for development purposes.",
-        isbn: `978-0-123456-${bookId.toString().padStart(2, '0')}-0`,
-        publishedDate: "2024-01-01",
-        coverImage: null,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        upvotes: Math.floor(Math.random() * 50),
-        downvotes: Math.floor(Math.random() * 10),
-        comments: [
-          {
-            id: 1,
-            content: "Great book! Really enjoyed reading it.",
-            userId: "dev-user-1",
-            userName: "Book Lover",
-            createdAt: new Date().toISOString(),
-          },
-          {
-            id: 2,
-            content: "Interesting story and well-written characters.",
-            userId: "dev-user-2", 
-            userName: "Avid Reader",
-            createdAt: new Date().toISOString(),
-          }
-        ]
-      };
-      return NextResponse.json(mockBook);
-    }
-
     const db = getDB();
 
     // Get book details
@@ -104,12 +69,6 @@ export async function DELETE(
 
     if (isNaN(bookId)) {
       return NextResponse.json({ error: "Invalid book ID" }, { status: 400 });
-    }
-
-    // In development mode, return mock success
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`Development mode: Would delete book ${bookId}`);
-      return NextResponse.json({ message: "Book deleted successfully (dev mode)" });
     }
 
     const db = getDB();

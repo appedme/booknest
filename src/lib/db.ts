@@ -7,10 +7,9 @@ export function getDB() {
     const { env } = getCloudflareContext();
     return drizzle(env.DB, { schema });
   } catch (error) {
-    // In development, create a mock database or handle gracefully
-    console.warn('Cloudflare context not available - using development mode');
-    // Return a mock or throw error for auth-related endpoints
-    throw new Error('Database not available in development mode');
+    // Database is only available in production (Cloudflare Workers)
+    console.warn('Cloudflare context not available - database connection failed');
+    throw new Error('Database connection failed. Please ensure you have a valid database connection configured.');
   }
 }
 
