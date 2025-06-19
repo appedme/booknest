@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
         await db.update(votes)
           .set({ voteType })
           .where(eq(votes.id, existingVote[0].id));
-        
+
         return NextResponse.json({ message: "Vote updated successfully" });
       } else {
         return NextResponse.json({ error: "You have already voted this way" }, { status: 400 });

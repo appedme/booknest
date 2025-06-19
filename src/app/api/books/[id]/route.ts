@@ -10,13 +10,13 @@ export async function GET(
 ) {
   try {
     const bookId = parseInt(params.id);
-    
+
     if (isNaN(bookId)) {
       return NextResponse.json({ error: "Invalid book ID" }, { status: 400 });
     }
 
     const db = getDB();
-    
+
     // Get book details
     const bookResult = await db.select()
       .from(books)
@@ -32,7 +32,7 @@ export async function GET(
     const upvotes = await db.select({ count: sql<number>`count(*)` })
       .from(votes)
       .where(and(eq(votes.bookId, bookId), eq(votes.voteType, "upvote")));
-    
+
     const downvotes = await db.select({ count: sql<number>`count(*)` })
       .from(votes)
       .where(and(eq(votes.bookId, bookId), eq(votes.voteType, "downvote")));
@@ -64,17 +64,17 @@ export async function DELETE(
 ) {
   try {
     const bookId = parseInt(params.id);
-    
+
     if (isNaN(bookId)) {
       return NextResponse.json({ error: "Invalid book ID" }, { status: 400 });
     }
 
     const db = getDB();
-    
+
     // Delete associated votes and comments first
     await db.delete(votes).where(eq(votes.bookId, bookId));
     await db.delete(comments).where(eq(comments.bookId, bookId));
-    
+
     // Delete the book
     const deletedBook = await db.delete(books)
       .where(eq(books.id, bookId))

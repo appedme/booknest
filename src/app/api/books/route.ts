@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     const offset = parseInt(searchParams.get("offset") || "0");
 
     const db = getDB();
-    
+
     // Build conditions array
     const conditions = [];
     if (genre && genre !== "all") {
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
         const upvotes = await db.select({ count: sql<number>`count(*)` })
           .from(votes)
           .where(and(eq(votes.bookId, book.id), eq(votes.voteType, "upvote")));
-        
+
         const downvotes = await db.select({ count: sql<number>`count(*)` })
           .from(votes)
           .where(and(eq(votes.bookId, book.id), eq(votes.voteType, "downvote")));
@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
       'Business', 'Self-Help', 'Biography', 'History', 'Philosophy',
       'Art', 'Design', 'Health', 'Education', 'Reference', 'Other'
     ];
-    
+
     if (!validGenres.includes(genre)) {
       return NextResponse.json(
         { error: "Invalid genre" },

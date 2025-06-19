@@ -10,12 +10,38 @@ Built with **Next.js**, **Cloudflare D1**, and **Drizzle ORM**.
 
 ---
 
-## **🚀 Current Status: Backend Complete**
+## **🚀 Current Status: Backend Complete ✅**
 
 ✅ **Database Setup**: Cloudflare D1 with Drizzle ORM  
 ✅ **API Routes**: Books, Comments, Votes, Genres  
-✅ **Schema**: Books, Users, Comments, Votes tables  
-⏳ **Frontend**: Next (to be built)  
+✅ **Schema**: Books, Comments, Votes tables  
+✅ **Frontend**: Basic homepage with book display  
+✅ **Testing**: API endpoints tested and working  
+
+### **🔧 How to Run**
+
+```bash
+# Install dependencies
+pnpm install
+
+# Start development server
+pnpm dev
+
+# Test API endpoints
+node test-api.js
+
+# View database in Drizzle Studio
+pnpm db:studio
+```
+
+### **📡 API Endpoints Available**
+
+- `GET /api/books` - List all books
+- `POST /api/books` - Create new book
+- `GET /api/books/[id]` - Get specific book details
+- `POST /api/votes` - Vote on a book
+- `POST /api/comments` - Add comment to book
+- `GET /api/genres` - List available genres  
 
 ---
 
