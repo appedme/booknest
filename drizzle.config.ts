@@ -5,8 +5,10 @@ export default defineConfig({
   schema: "./src/lib/schema.ts",
   out: "./drizzle",
   dbCredentials: {
-    // For local development, use the Wrangler D1 database
-    url: "file:./.wrangler/state/v3/d1/miniflare-D1DatabaseObject/booknest-db.sqlite",
+    // For local development, use local SQLite file
+    url: process.env.NODE_ENV === 'production'
+      ? "file:./.wrangler/state/v3/d1/miniflare-D1DatabaseObject/booknest-db.sqlite"
+      : "file:./local.db",
   },
   verbose: true,
   strict: true,

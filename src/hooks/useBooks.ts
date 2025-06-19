@@ -1,55 +1,67 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { Book } from '@/types';
+import useSWR from 'swr';
+import type { Book, PaginatedResponse } from '@/types';
 
-interface UseBooksReturn {
-  books: Book[];
-  isLoading: boolean;
-  error: string | null;
-  refetch: () => void;
-}
+// Fetcher function for SWR
+const fetcher = async (url: string) => {
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error('Failed to fetch data');
+  }
+  return res.json();
+};
 
-export function useBooks(): UseBooksReturn {
-  const [books, setBooks] = useState<Book[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+// SWR hook for fetching all books
+export function useBooks(filters?: {
+  genre?: string;
+  search?: string;
+  sortBy?: string;
+  limit?: number;
+  offset?: number;
+}) {
+  const params = new URLSearchParams();
+  if (filters?.genre) params.append('genre', filters.genre);
+  if (filters?.search) params.append('search', filters.search);
+  if (filters?.sortBy) params.append('sortBy', filters.sortBy);
+  if (filters?.limit) params.append('limit', filters.limit.toString());
+  if (filters?.offset) params.append('offset', filters.offset.toString());
 
-  const fetchBooks = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      
-      const response = await fetch('/api/books', {
-        cache: 'no-store'
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch books');
-      }
-
-      const data = await response.json();
-      
-      // Ensure data is an array
-      const booksArray = Array.isArray(data) ? data : [];
-      setBooks(booksArray);
-    } catch (err) {
-      console.error('Error fetching books:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch books');
-      setBooks([]); // Set empty array on error
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchBooks();
-  }, []);
+  const url = `/api/books${params.toString() ? `?${params.toString()}` : ''}`;
+  
+  const { data, error, isLoading, mutate } = useSWR(url, fetcher);
 
   return {
-    books,
+    books: (data as { books: Book[] })?.books || [],
+    pagination: (data as { pagination: any })?.pagination,
     isLoading,
-    error,
-    refetch: fetchBooks,
+    isError: error,
+    mutate, // For manual revalidation
+  };
+}
+
+// SWR hook for fetching a single book
+export function useBook(id: string | number) {
+  const { data, error, isLoading, mutate } = useSWR(
+    id ? `/api/books/${id}` : null,
+    fetcher
+  );
+
+  return {
+    book: data as Book,
+    isLoading,
+    isError: error,
+    mutate,
+  };
+}
+
+// SWR hook for fetching genres
+export function useGenres() {
+  const { data, error, isLoading } = useSWR('/api/genres', fetcher);
+
+  return {
+    genres: (data as string[]) || [],
+    isLoading,
+    isError: error,
   };
 }

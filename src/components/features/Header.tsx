@@ -27,14 +27,14 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-2">
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-2 rounded-lg">
-            <BookOpen className="h-5 w-5 text-white" />
+          <div className="bg-primary p-2 rounded-lg">
+            <BookOpen className="h-5 w-5 text-primary-foreground" />
           </div>
-          <span className="font-bold text-xl bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          <span className="font-bold text-xl text-primary">
             BookNest
           </span>
         </Link>
@@ -43,19 +43,25 @@ export function Header() {
         <nav className="hidden md:flex items-center space-x-6">
           <Link
             href="/"
-            className="text-sm font-medium transition-colors hover:text-blue-600"
+            className="text-sm font-medium transition-colors hover:text-primary"
           >
             Discover
           </Link>
           <Link
+            href="/dashboard"
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+          >
+            Dashboard
+          </Link>
+          <Link
             href="/genres"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-blue-600"
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
           >
             Genres
           </Link>
           <Link
             href="/trending"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-blue-600"
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
           >
             Trending
           </Link>
@@ -70,7 +76,7 @@ export function Header() {
               <div className="hidden sm:flex">
                 <AddBookDialog onBookAdded={() => window.location.reload()} />
               </div>
-              
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-8 w-8 rounded-full">

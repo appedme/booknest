@@ -10,7 +10,7 @@ import { useBooks } from '@/hooks/useBooks';
 
 // Client component to display books
 function BooksList() {
-  const { books, isLoading, error, refetch } = useBooks();
+  const { books, isLoading, isError, mutate } = useBooks();
 
   if (isLoading) {
     return (
@@ -30,7 +30,7 @@ function BooksList() {
     );
   }
 
-  if (error) {
+  if (isError) {
     return (
       <div className="text-center py-20">
         <div className="max-w-md mx-auto">
@@ -39,7 +39,7 @@ function BooksList() {
           </div>
           <h2 className="text-2xl font-semibold text-gray-900 mb-4">Something went wrong</h2>
           <p className="text-gray-600 mb-8">We couldn't load the books. Please try again later.</p>
-          <Button variant="outline" onClick={refetch}>
+          <Button variant="outline" onClick={() => mutate()}>
             Try Again
           </Button>
         </div>
@@ -51,12 +51,12 @@ function BooksList() {
     return (
       <div className="text-center py-20">
         <div className="max-w-md mx-auto">
-          <div className="bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full p-4 w-16 h-16 mx-auto mb-6">
-            <Sparkles className="h-8 w-8 text-blue-600 mx-auto" />
+          <div className="bg-primary/10 rounded-full p-4 w-16 h-16 mx-auto mb-6">
+            <Sparkles className="h-8 w-8 text-primary mx-auto" />
           </div>
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">No books yet</h2>
-          <p className="text-gray-600 mb-8">Be the first to share an amazing book with the community!</p>
-          <AddBookDialog onBookAdded={refetch} />
+          <h2 className="text-2xl font-semibold mb-4">No books yet</h2>
+          <p className="text-muted-foreground mb-8">Be the first to share an amazing book with the community!</p>
+          <AddBookDialog onBookAdded={() => mutate()} />
         </div>
       </div>
     );
@@ -68,7 +68,7 @@ function BooksList() {
         <BookCard
           key={book.id}
           book={book}
-          onVoteSuccess={refetch}
+          onVoteSuccess={() => mutate()}
           onComment={(bookId) => {
             console.log('Comment:', bookId);
             // TODO: Implement comment modal
@@ -80,26 +80,26 @@ function BooksList() {
 }
 
 export default function Home() {
-  const { refetch } = useBooks();
-  
+  const { mutate } = useBooks();
+
   const handleBookAdded = useCallback(() => {
-    refetch();
-  }, [refetch]);
+    mutate();
+  }, [mutate]);
   return (
-    <div className="bg-gradient-to-br from-gray-50 via-white to-blue-50 min-h-screen">
+    <div className="bg-background min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white">
+      <section className="bg-primary text-primary-foreground">
         <div className="container mx-auto px-4 py-16">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6">
               Discover Amazing Books
             </h1>
-            <p className="text-xl md:text-2xl text-blue-100 mb-8 leading-relaxed">
+            <p className="text-xl md:text-2xl mb-8 leading-relaxed opacity-90">
               Share, discover, and discuss the best books with our growing community
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <AddBookDialog onBookAdded={handleBookAdded} />
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
+              <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary">
                 <TrendingUp className="h-5 w-5 mr-2" />
                 Explore Trending
               </Button>
@@ -113,7 +113,7 @@ export default function Home() {
         {/* Filter Tabs */}
         <div className="mb-8">
           <div className="flex flex-wrap gap-2 justify-center">
-            <Button variant="default" size="sm" className="bg-blue-600 hover:bg-blue-700">
+            <Button variant="default" size="sm">
               <Sparkles className="h-4 w-4 mr-2" />
               All Books
             </Button>

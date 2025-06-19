@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDB } from "@/lib/db";
 import { comments } from "@/lib/schema";
 import { eq, desc } from "drizzle-orm";
+import { auth } from "@/lib/auth";
+import type { User } from "@/types";
 
 // GET comments for a book
 export async function GET(request: NextRequest) {
@@ -29,7 +31,12 @@ export async function GET(request: NextRequest) {
 // POST new comment
 export async function POST(request: NextRequest) {
   try {
-    const body: any = await request.json();
+    const session = await auth();
+    const body = await request.json() as {
+      bookId: number;
+      content: string;
+      username?: string;
+    };
     const { bookId, content, username } = body;
 
     // Validate required fields
@@ -48,11 +55,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const user = session?.user as User;
     const db = getDB();
     const newComment = await db.insert(comments).values({
       bookId,
-      userId: null, // For anonymous comments
-      authorName: username || "Anonymous",
+      userId: user?.id || null,
+      authorName: user?.name || username || "Anonymous",
       content,
     }).returning();
 

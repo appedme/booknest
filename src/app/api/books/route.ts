@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDB } from "@/lib/db";
 import { books, votes } from "@/lib/schema";
 import { desc, eq, sql, and } from "drizzle-orm";
+import { auth } from "@/lib/auth";
+import type { User } from "@/types";
 
 // GET all books (with filtering and sorting options)
 export async function GET(request: NextRequest) {
@@ -9,7 +11,6 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const genre = searchParams.get("genre");
     const search = searchParams.get("search");
-    const sortBy = searchParams.get("sortBy") || "recent";
     const limit = parseInt(searchParams.get("limit") || "20");
     const offset = parseInt(searchParams.get("offset") || "0");
 
@@ -46,18 +47,18 @@ export async function GET(request: NextRequest) {
     // Get vote counts for each book
     const booksWithVotes = await Promise.all(
       allBooks.map(async (book) => {
-        const upvotes = await db.select({ count: sql<number>`count(*)` })
+        const upvoteCount = await db.select()
           .from(votes)
           .where(and(eq(votes.bookId, book.id), eq(votes.voteType, "upvote")));
 
-        const downvotes = await db.select({ count: sql<number>`count(*)` })
+        const downvoteCount = await db.select()
           .from(votes)
           .where(and(eq(votes.bookId, book.id), eq(votes.voteType, "downvote")));
 
         return {
           ...book,
-          upvotes: upvotes[0]?.count || 0,
-          downvotes: downvotes[0]?.count || 0,
+          upvotes: upvoteCount.length,
+          downvotes: downvoteCount.length,
         };
       })
     );
@@ -79,7 +80,14 @@ export async function GET(request: NextRequest) {
 // POST new book
 export async function POST(request: NextRequest) {
   try {
-    const body: any = await request.json();
+    const session = await auth();
+    const body = await request.json() as {
+      name: string;
+      url: string;
+      posterUrl?: string;
+      summary?: string;
+      genre: string;
+    };
     const { name, url, posterUrl, summary, genre } = body;
 
     // Validate required fields
@@ -111,7 +119,7 @@ export async function POST(request: NextRequest) {
       posterUrl: posterUrl || null,
       summary: summary || null,
       genre,
-      userId: null, // For now, all submissions are anonymous
+      userId: (session?.user as User)?.id || null, // Associate with authenticated user if available
     }).returning();
 
     return NextResponse.json(newBook[0], { status: 201 });

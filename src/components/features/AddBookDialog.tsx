@@ -24,12 +24,15 @@ import { BOOK_GENRES } from "@/constants/books";
 import { BookFormData } from "@/types";
 import { Plus, BookOpen, Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { createBook, validateBookData } from "@/utils/books";
+import { requireAuth } from "@/utils/auth";
 
 interface AddBookDialogProps {
   onBookAdded?: () => void;
+  children?: React.ReactNode;
 }
 
-export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
+export function AddBookDialog({ onBookAdded, children }: AddBookDialogProps) {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<BookFormData>({
@@ -43,40 +46,36 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!isAuthenticated) {
-      await login();
+
+    if (!requireAuth(isAuthenticated, login)) {
+      return;
+    }
+
+    // Validate form data
+    const errors = validateBookData(formData);
+    if (errors.length > 0) {
+      alert(errors.join('\n'));
       return;
     }
 
     setIsSubmitting(true);
-    
-    try {
-      const response = await fetch('/api/books', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
 
-      if (response.ok) {
-        // Reset form
-        setFormData({
-          name: '',
-          url: '',
-          posterUrl: '',
-          summary: '',
-          genre: '',
-        });
-        setOpen(false);
-        onBookAdded?.();
-      } else {
-        throw new Error('Failed to add book');
-      }
+    try {
+      await createBook(formData);
+      
+      // Reset form
+      setFormData({
+        name: '',
+        url: '',
+        posterUrl: '',
+        summary: '',
+        genre: '',
+      });
+      setOpen(false);
+      onBookAdded?.();
     } catch (error) {
       console.error('Error adding book:', error);
-      alert('Failed to add book. Please try again.');
+      alert(error instanceof Error ? error.message : 'Failed to add book. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -98,10 +97,12 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
-          <Plus className="h-4 w-4 mr-2" />
-          Add Book
-        </Button>
+        {children || (
+          <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Book
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
@@ -113,7 +114,7 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
             Share an amazing book with the community. All fields marked with * are required.
           </DialogDescription>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Book Title */}
           <div className="space-y-2">

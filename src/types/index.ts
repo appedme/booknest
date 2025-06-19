@@ -21,6 +21,7 @@ export interface Book {
   posterUrl: string | null;
   summary: string | null;
   genre: string;
+  userId: string | null;
   createdAt: string;
   updatedAt: string;
   upvotes: number;
@@ -68,12 +69,11 @@ export interface ApiResponse<T> {
 }
 
 export interface PaginatedResponse<T> {
-  data: T[];
+  books: T[];
   pagination: {
-    page: number;
     limit: number;
-    total: number;
-    totalPages: number;
+    offset: number;
+    total?: number;
   };
 }
 

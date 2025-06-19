@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDB } from "@/lib/db";
 import { books, votes, comments } from "@/lib/schema";
-import { eq, sql, and, desc } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 
 // GET individual book with details
 export async function GET(
@@ -30,11 +30,11 @@ export async function GET(
     const book = bookResult[0];
 
     // Get vote counts
-    const upvotes = await db.select({ count: sql<number>`count(*)` })
+    const upvoteResults = await db.select()
       .from(votes)
       .where(and(eq(votes.bookId, bookId), eq(votes.voteType, "upvote")));
 
-    const downvotes = await db.select({ count: sql<number>`count(*)` })
+    const downvoteResults = await db.select()
       .from(votes)
       .where(and(eq(votes.bookId, bookId), eq(votes.voteType, "downvote")));
 
@@ -46,8 +46,8 @@ export async function GET(
 
     const bookWithDetails = {
       ...book,
-      upvotes: upvotes[0]?.count || 0,
-      downvotes: downvotes[0]?.count || 0,
+      upvotes: upvoteResults.length,
+      downvotes: downvoteResults.length,
       comments: bookComments,
     };
 
