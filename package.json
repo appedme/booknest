@@ -9,10 +9,18 @@
 		"lint": "next lint",
 		"deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
 		"preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-		"cf-typegen": "wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts"
+		"cf-typegen": "wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "wrangler d1 migrations apply booknest-db --local",
+		"db:migrate:prod": "wrangler d1 migrations apply booknest-db --remote",
+		"db:studio": "drizzle-kit studio",
+		"db:status": "wrangler d1 migrations list booknest-db",
+		"db:create": "wrangler d1 create booknest-db"
 	},
 	"dependencies": {
 		"@opennextjs/cloudflare": "^1.3.0",
+		"better-sqlite3": "^11.10.0",
+		"drizzle-orm": "^0.44.2",
 		"next": "15.3.3",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0"
@@ -23,6 +31,7 @@
 		"@types/node": "^20",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
+		"drizzle-kit": "^0.31.1",
 		"eslint": "^9",
 		"eslint-config-next": "15.3.3",
 		"tailwindcss": "^4",

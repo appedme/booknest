@@ -1,36 +1,272 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Here’s a **complete roadmap** to build your **simple book-sharing platform** with the features you mentioned:
 
-## Getting Started
+---
 
-First, run the development server:
+# 📚 **BookNest - Book Sharing Platform**
+
+A simple platform where users can list books via URLs, provide details, and allow community interactions (comments, upvotes, dislikes) with genre-based filtering.
+
+Built with **Next.js**, **Cloudflare D1**, and **Drizzle ORM**.
+
+---
+
+## **🚀 Current Status: Backend Complete**
+
+✅ **Database Setup**: Cloudflare D1 with Drizzle ORM  
+✅ **API Routes**: Books, Comments, Votes, Genres  
+✅ **Schema**: Books, Users, Comments, Votes tables  
+⏳ **Frontend**: Next (to be built)  
+
+---
+
+## **Phase 1: Planning & Setup** ✅
+
+### ✅ Define Core Features
+
+* User Authentication (optional: can allow anonymous uploads)
+* Book Submission:
+
+  * Book Name
+  * Book URL (PDF, GitBook, Docusaurus, etc.)
+  * Poster/Image
+  * Summary/Description
+  * Genre selection
+* Book Listing by:
+
+  * Genre
+  * Popularity (upvotes)
+  * Recent uploads
+* Book Detail Page:
+
+  * View book information
+  * Comments
+  * Upvote/Dislike
+* Comment System (basic)
+* Search Functionality (optional, can add later)
+
+### ✅ Tech Stack
+
+* **Frontend**: Next.js + Tailwind CSS (clean and fast)
+* **Backend**: Next.js API Routes / Node.js (or optional: Firebase)
+* **Database**: SQLite (for quick start) or PostgreSQL (if you plan to scale)
+* **Auth (Optional)**: NextAuth.js (Google/GitHub or guest login)
+* **Hosting**: Cloudflare Pages, Vercel, or Netlify
+* **Image Hosting**: Upload to Cloudinary / direct URLs
+
+---
+
+## **🗄️ Backend Implementation Complete**
+
+### Database Schema (Cloudflare D1 + Drizzle ORM)
+
+**Books Table:**
+- `id`: Primary key (integer)
+- `name`: Book title (text)
+- `url`: Book URL (text) 
+- `posterUrl`: Book cover image URL (text, optional)
+- `summary`: Book description (text, optional)
+- `genre`: Book category (text)
+- `createdAt`: Creation timestamp
+- `updatedAt`: Update timestamp
+
+**Votes Table:**
+- `id`: Primary key (integer)
+- `bookId`: Reference to book (integer)
+- `ipHash`: Hashed IP for anonymous voting (text)
+- `voteType`: 'upvote' or 'downvote' (text)
+- `createdAt`: Creation timestamp
+
+**Comments Table:**
+- `id`: Primary key (integer)
+- `bookId`: Reference to book (integer)
+- `content`: Comment text (text)
+- `authorName`: Comment author name (text, optional)
+- `createdAt`: Creation timestamp
+
+### API Endpoints
+
+**Books API (`/api/books`)**
+- `GET`: List all books (with optional genre filter)
+- `POST`: Create new book
+
+**Individual Book (`/api/books/[id]`)**
+- `GET`: Get book details with comments and vote counts
+- `PUT`: Update book details
+- `DELETE`: Delete book
+
+**Votes API (`/api/votes`)**
+- `POST`: Cast vote (upvote/downvote) for a book
+
+**Comments API (`/api/comments`)**
+- `POST`: Add comment to a book
+
+**Genres API (`/api/genres`)**
+- `GET`: List all available genres
+
+### Database Commands
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Generate migration
+pnpm db:generate
+
+# Apply migration locally
+pnpm db:migrate:local
+
+# Apply migration to production
+pnpm db:migrate:prod
+
+# Open Drizzle Studio
+pnpm db:studio
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## **Phase 2: Database Schema Design** ✅
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Tables:
 
-## Learn More
+1. **Users**
 
-To learn more about Next.js, take a look at the following resources:
+   * id
+   * username
+   * email (optional)
+2. **Books**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   * id
+   * name
+   * url
+   * poster\_url
+   * summary
+   * genre
+   * created\_at
+   * user\_id (optional)
+3. **Votes**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   * id
+   * book\_id
+   * user\_id (optional, or by IP hash)
+   * vote\_type (upvote / dislike)
+4. **Comments**
 
-## Deploy on Vercel
+   * id
+   * book\_id
+   * user\_id (optional)
+   * content
+   * created\_at
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## **Phase 3: Core Development**
+
+### 1. 🎨 UI Design
+
+* Simple grid or list view for book browsing
+* Minimalist book card with:
+
+  * Poster
+  * Title
+  * Summary
+  * Genre tag
+  * Upvote / Dislike count
+
+### 2. 🔐 Authentication (Optional)
+
+* Basic guest posting or simple email/password
+* Google login via NextAuth.js if needed
+
+### 3. 📥 Book Submission Form
+
+* Input fields: Name, URL, Poster URL, Summary, Genre dropdown
+* Submit to backend to store in DB
+
+### 4. 📚 Book Listing Page
+
+* Fetch and display books
+* Filters: Genre, Popular, Recent
+* Sorting: Upvotes, Newest
+
+### 5. 📄 Book Detail Page
+
+* Display:
+
+  * Title
+  * Poster
+  * Summary
+  * Book Link (external)
+  * Genre
+  * Comments section
+  * Upvote / Dislike buttons
+
+### 6. 👍 Voting System
+
+* Click to upvote/dislike (one vote per user/IP)
+* Simple vote count display
+
+### 7. 💬 Comment System
+
+* Add and display comments
+* Sort by newest
+
+---
+
+## **Phase 4: Extra Features (Optional)**
+
+* Full-text search (using something like Meilisearch or SQLite LIKE queries)
+* User profiles (view all books submitted by a user)
+* Pagination or infinite scroll
+* Reporting spam/abuse
+* Email notifications (for replies on comments)
+
+---
+
+## **Phase 5: Deployment**
+
+* Deploy frontend and backend to **Vercel** or **Cloudflare Pages**
+* Connect to free database hosting (like **Planetscale** for MySQL or **Supabase**)
+* Use Cloudinary for poster uploads if you want user image uploads
+
+---
+
+## **Phase 6: Polish & Launch**
+
+* Improve UI/UX
+* Add basic SEO
+* Create a landing page
+* Share with friends and communities
+
+---
+
+## **Monetization (If you want later)**
+
+* Featured book slots
+* Ads (non-intrusive)
+* Community donations
+* Premium account with exclusive features like analytics for their books
+
+---
+
+## ⚡ Suggested Timeline
+
+| Phase            | Duration  |
+| ---------------- | --------- |
+| Planning & Setup | 1 day     |
+| Database Design  | 1 day     |
+| Core Development | 7-10 days |
+| Extra Features   | 3-5 days  |
+| Deployment       | 1 day     |
+| Polish & Launch  | 2 days    |
+
+---
+
+## 🎁 Tools to Use
+
+* **UI Components**: shadcn/ui, Headless UI, Heroicons
+* **State Management**: React Query or SWR
+* **Database ORM**: Drizzle ORM (simple and works well with SQLite)
+* **Image CDN**: Cloudinary
+* **Hosting**: Vercel / Cloudflare Pages
+
+---
+
+If you want, I can **help you build each feature step-by-step** or provide **starter boilerplate code**.
+Let me know if you’d like that! 😊
