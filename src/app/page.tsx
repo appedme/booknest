@@ -1,24 +1,10 @@
 import { Suspense } from 'react';
-
-// Book interface
-interface Book {
-  id: number;
-  name: string;
-  url: string;
-  posterUrl: string | null;
-  summary: string | null;
-  genre: string;
-  createdAt: string;
-  updatedAt: string;
-  upvotes: number;
-  downvotes: number;
-  comments: Array<{
-    id: number;
-    content: string;
-    authorName: string | null;
-    createdAt: string;
-  }>;
-}
+import { BookCard } from '@/components/features/BookCard';
+import { AddBookDialog } from '@/components/features/AddBookDialog';
+import { Button } from '@/components/ui/button';
+import { BOOK_GENRES } from '@/constants/books';
+import { Book } from '@/types';
+import { Sparkles, TrendingUp, Clock } from 'lucide-react';
 
 // Server component to fetch books
 async function BooksList() {
@@ -35,68 +21,46 @@ async function BooksList() {
 
     if (books.length === 0) {
       return (
-        <div className="text-center py-12">
-          <h2 className="text-2xl font-semibold text-gray-600 mb-4">No books found</h2>
-          <p className="text-gray-500">Be the first to share a book!</p>
+        <div className="text-center py-20">
+          <div className="max-w-md mx-auto">
+            <div className="bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full p-4 w-16 h-16 mx-auto mb-6">
+              <Sparkles className="h-8 w-8 text-blue-600 mx-auto" />
+            </div>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">No books yet</h2>
+            <p className="text-gray-600 mb-8">Be the first to share an amazing book with the community!</p>
+            <AddBookDialog onBookAdded={() => window.location.reload()} />
+          </div>
         </div>
       );
     }
 
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {books.map((book) => (
-          <div key={book.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-            {book.posterUrl && (
-              <img
-                src={book.posterUrl}
-                alt={book.name}
-                className="w-full h-48 object-cover"
-              />
-            )}
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-2">
-                <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">
-                  {book.genre}
-                </span>
-                <div className="flex items-center space-x-2 text-sm text-gray-500">
-                  <span>👍 {book.upvotes}</span>
-                  <span>👎 {book.downvotes}</span>
-                </div>
-              </div>
-
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                {book.name}
-              </h3>
-
-              {book.summary && (
-                <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                  {book.summary}
-                </p>
-              )}
-
-              <div className="flex items-center justify-between">
-                <a
-                  href={book.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center px-3 py-1 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 transition-colors"
-                >
-                  Read Book →
-                </a>
-                <span className="text-xs text-gray-400">
-                  {book.comments.length} comments
-                </span>
-              </div>
-            </div>
-          </div>
+          <BookCard
+            key={book.id}
+            book={book}
+            onComment={(bookId) => {
+              console.log('Comment:', bookId);
+              // TODO: Implement comment modal
+            }}
+          />
         ))}
       </div>
     );
   } catch (error) {
     return (
-      <div className="text-center py-12">
-        <h2 className="text-2xl font-semibold text-red-600 mb-4">Error loading books</h2>
-        <p className="text-gray-500">Please try again later.</p>
+      <div className="text-center py-20">
+        <div className="max-w-md mx-auto">
+          <div className="bg-red-100 rounded-full p-4 w-16 h-16 mx-auto mb-6">
+            <span className="text-2xl">😵</span>
+          </div>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-4">Something went wrong</h2>
+          <p className="text-gray-600 mb-8">We couldn't load the books. Please try again later.</p>
+          <Button variant="outline" onClick={() => window.location.reload()}>
+            Try Again
+          </Button>
+        </div>
       </div>
     );
   }
@@ -104,47 +68,67 @@ async function BooksList() {
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-gray-900">📚 BookNest</h1>
-              <p className="ml-4 text-gray-600">Share and discover amazing books</p>
+    <div className="bg-gradient-to-br from-gray-50 via-white to-blue-50 min-h-screen">
+      {/* Hero Section */}
+      <section className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white">
+        <div className="container mx-auto px-4 py-16">
+          <div className="max-w-4xl mx-auto text-center">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
+              Discover Amazing Books
+            </h1>
+            <p className="text-xl md:text-2xl text-blue-100 mb-8 leading-relaxed">
+              Share, discover, and discuss the best books with our growing community
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <AddBookDialog onBookAdded={() => window.location.reload()} />
+              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
+                <TrendingUp className="h-5 w-5 mr-2" />
+                Explore Trending
+              </Button>
             </div>
-            <button className="px-4 py-2 bg-blue-600 text-white font-medium rounded hover:bg-blue-700 transition-colors">
-              Add Book
-            </button>
           </div>
         </div>
-      </header>
+      </section>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Filters */}
+      <main className="container mx-auto px-4 py-12">
+        {/* Filter Tabs */}
         <div className="mb-8">
-          <div className="flex flex-wrap gap-2">
-            <button className="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors">
-              All Genres
-            </button>
-            <button className="px-3 py-1 bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition-colors">
-              Programming
-            </button>
-            <button className="px-3 py-1 bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition-colors">
-              Fiction
-            </button>
-            <button className="px-3 py-1 bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition-colors">
-              Non-Fiction
-            </button>
+          <div className="flex flex-wrap gap-2 justify-center">
+            <Button variant="default" size="sm" className="bg-blue-600 hover:bg-blue-700">
+              <Sparkles className="h-4 w-4 mr-2" />
+              All Books
+            </Button>
+            <Button variant="outline" size="sm">
+              <TrendingUp className="h-4 w-4 mr-2" />
+              Trending
+            </Button>
+            <Button variant="outline" size="sm">
+              <Clock className="h-4 w-4 mr-2" />
+              Recent
+            </Button>
+            {BOOK_GENRES.slice(0, 5).map((genre) => (
+              <Button key={genre} variant="outline" size="sm" className="hidden sm:inline-flex">
+                {genre}
+              </Button>
+            ))}
           </div>
         </div>
 
         {/* Books Grid */}
         <Suspense fallback={
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <p className="mt-2 text-gray-500">Loading books...</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="bg-white rounded-lg shadow-sm border animate-pulse">
+                <div className="aspect-[3/4] bg-gray-200 rounded-t-lg" />
+                <div className="p-4 space-y-3">
+                  <div className="h-4 bg-gray-200 rounded w-20" />
+                  <div className="h-5 bg-gray-200 rounded w-full" />
+                  <div className="h-4 bg-gray-200 rounded w-3/4" />
+                  <div className="h-8 bg-gray-200 rounded w-full mt-4" />
+                </div>
+              </div>
+            ))}
           </div>
         }>
           <BooksList />
