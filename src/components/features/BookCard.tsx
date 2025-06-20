@@ -41,25 +41,27 @@ export function BookCard({ book, onComment, onVoteSuccess }: BookCardProps) {
   };
 
   const handleReadBook = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
-  };
-
-  return (
-    <Link href={`/books/${book.id}`}>
-      <Card className="group overflow-hidden transition-all duration-300 hover:shadow-lg border-0 bg-white shadow-sm cursor-pointer">
+    window.open(book.url, '_blank', 'noopener,noreferrer');
+  };  return (
+    <div className="group">
+      <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg border-0 bg-white shadow-sm">
         {/* Book Poster */}
         {book.posterUrl && (
-          <div className="relative overflow-hidden aspect-[3/4] bg-gradient-to-br from-gray-100 to-gray-200">
-            <img
-              src={book.posterUrl}
-              alt={book.name}
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
-              }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          </div>
+          <Link href={`/books/${book.id}`} className="block">
+            <div className="relative overflow-hidden aspect-[3/4] bg-gradient-to-br from-gray-100 to-gray-200">
+              <img
+                src={book.posterUrl}
+                alt={book.name}
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </div>
+          </Link>
         )}
 
         <CardContent className="p-4 space-y-3">
@@ -74,9 +76,11 @@ export function BookCard({ book, onComment, onVoteSuccess }: BookCardProps) {
           </div>
 
           {/* Book Title */}
-          <h3 className="font-semibold text-lg leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors">
-            {book.name}
-          </h3>
+          <Link href={`/books/${book.id}`}>
+            <h3 className="font-semibold text-lg leading-tight line-clamp-2 hover:text-blue-600 transition-colors cursor-pointer">
+              {book.name}
+            </h3>
+          </Link>
 
           {/* Summary */}
           {book.summary && (
@@ -133,21 +137,17 @@ export function BookCard({ book, onComment, onVoteSuccess }: BookCardProps) {
 
           {/* Read Book Button */}
           <div className="pt-2">
-            <a
-              href={book.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full"
+            <Button 
+              className="w-full" 
+              size="sm"
               onClick={handleReadBook}
             >
-              <Button className="w-full" size="sm">
-                <ExternalLink className="h-4 w-4 mr-2" />
-                Read Book
-              </Button>
-            </a>
+              <ExternalLink className="h-4 w-4 mr-2" />
+              Read Book
+            </Button>
           </div>
         </CardContent>
       </Card>
-    </Link>
+    </div>
   );
 }

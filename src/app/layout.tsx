@@ -28,11 +28,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50`}
       >
         <AuthProvider>
           <SWRProvider>
-            <div className="relative flex min-h-screen flex-col">
+            <div className="min-h-screen flex flex-col">
               <Header />
               <main className="flex-1">
                 {children}
