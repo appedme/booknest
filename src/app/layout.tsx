@@ -55,9 +55,11 @@ export default function RootLayout({
             <SWRProvider>
               <div className="min-h-screen flex flex-col">
                 <Header />
-                <main className="flex-1">
-                  {children}
-                </main>
+                <div className="flex flex-1">
+                  <main className="flex-1">
+                    {children}
+                  </main>
+                </div>
                 <Footer />
               </div>
             </SWRProvider>

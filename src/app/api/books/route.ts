@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDB } from "@/lib/db";
-import { books, votes, comments } from "@/lib/schema";
+import { books, votes, comments, GENRES } from "@/lib/schema";
 import { desc, eq, sql, and } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import type { User } from "@/types";
@@ -108,15 +108,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate genre
-    const validGenres = [
-      'Fiction', 'Non-Fiction', 'Science', 'Technology', 'Programming',
-      'Business', 'Self-Help', 'Biography', 'History', 'Philosophy',
-      'Art', 'Design', 'Health', 'Education', 'Reference', 'Other'
-    ];
-
-    if (!validGenres.includes(genre)) {
+    if (!GENRES.includes(genre as any)) {
       return NextResponse.json(
-        { error: "Invalid genre" },
+        { error: `Invalid genre. Valid genres are: ${GENRES.join(', ')}` },
         { status: 400 }
       );
     }

@@ -22,6 +22,8 @@ export interface Book {
   summary: string | null;
   genre: string;
   userId: string | null;
+  authorName?: string | null;
+  authorImage?: string | null;
   createdAt: string;
   updatedAt: string;
   upvotes: number;

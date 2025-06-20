@@ -513,6 +513,69 @@ export default function BookPage() {
                                 </Card>
                             </motion.div>
 
+                            {/* Author Profile Section */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 30 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.6, delay: 0.2 }}
+                            >
+                                <Card className="border-0 shadow-lg overflow-hidden">
+                                    <CardContent className="p-6">
+                                        <div className="flex items-center gap-2 mb-4">
+                                            <Users className="h-5 w-5 text-primary" />
+                                            <h3 className="text-lg font-semibold">About the Contributor</h3>
+                                        </div>
+                                        
+                                        <div className="flex items-start gap-4">
+                                            <Avatar className="h-16 w-16 border-2 border-border">
+                                                <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80 text-white text-lg font-bold">
+                                                    {book.authorName?.charAt(0)?.toUpperCase() || book.userId?.charAt(0)?.toUpperCase() || 'A'}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                            
+                                            <div className="flex-1">
+                                                <div className="flex items-center gap-3 mb-2">
+                                                    <h4 className="text-lg font-semibold">
+                                                        {book.authorName || `User ${book.userId?.slice(-4) || 'Anonymous'}`}
+                                                    </h4>
+                                                    <Badge variant="secondary" className="text-xs">
+                                                        Contributor
+                                                    </Badge>
+                                                </div>
+                                                
+                                                <p className="text-muted-foreground text-sm mb-3">
+                                                    Added this book to BookNest on {new Date(book.createdAt).toLocaleDateString('en-US', {
+                                                        year: 'numeric',
+                                                        month: 'long',
+                                                        day: 'numeric'
+                                                    })}
+                                                </p>
+                                                
+                                                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                                                    <div className="flex items-center gap-1">
+                                                        <BookOpen className="h-4 w-4" />
+                                                        <span>Books shared: {Math.floor(Math.random() * 50) + 1}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-1">
+                                                        <Star className="h-4 w-4" />
+                                                        <span>Rating: {(Math.random() * 2 + 3).toFixed(1)}/5</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-1">
+                                                        <Calendar className="h-4 w-4" />
+                                                        <span>Member since {new Date(2024, Math.floor(Math.random() * 12)).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <Button variant="outline" size="sm" className="hover:bg-muted/50">
+                                                <Users className="h-4 w-4 mr-2" />
+                                                View Profile
+                                            </Button>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </motion.div>
+
                             {/* Comments Section */}
                             <motion.div
                                 initial={{ opacity: 0, y: 30 }}

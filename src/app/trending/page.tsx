@@ -2,13 +2,28 @@
 
 import { useBooks } from "@/hooks/useBooks";
 import { BookCard } from "@/components/features/BookCard";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, Flame, Calendar, ThumbsUp, MessageCircle, Clock, BookOpen, Star } from "lucide-react";
+import { PageWrapper } from "@/components/wrappers/PageWrapper";
+import { 
+  TrendingUp, 
+  Flame, 
+  Calendar, 
+  ThumbsUp, 
+  MessageCircle, 
+  Clock, 
+  BookOpen, 
+  Star,
+  Filter,
+  BarChart3,
+  Zap,
+  Award
+} from "lucide-react";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
+import { motion } from "framer-motion";
 
 type SortOption = 'hot' | 'new' | 'top' | 'discussed';
 
@@ -76,217 +91,296 @@ export default function TrendingPage() {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-gray-50/50">
-                <div className="container py-8">
-                    <div className="animate-pulse space-y-6">
-                        <div className="h-8 bg-gray-200 rounded w-48"></div>
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            {Array(4).fill(0).map((_, i) => (
-                                <div key={i} className="h-24 bg-gray-200 rounded"></div>
-                            ))}
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                            {Array(8).fill(0).map((_, i) => (
-                                <div key={i} className="h-96 bg-gray-200 rounded"></div>
-                            ))}
+            <PageWrapper showSidebar={true}>
+                <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
+                    <div className="container py-8">
+                        <div className="animate-pulse space-y-6">
+                            <div className="h-8 bg-muted rounded w-48"></div>
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                {Array(4).fill(0).map((_, i) => (
+                                    <div key={i} className="h-24 bg-muted rounded"></div>
+                                ))}
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                {Array(8).fill(0).map((_, i) => (
+                                    <div key={i} className="h-96 bg-muted rounded"></div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </PageWrapper>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50/50">
-            <div className="container py-8 space-y-8">
-                {/* Header */}
-                <div className="text-center space-y-4">
-                    <div className="flex items-center justify-center gap-3 mb-4">
-                        <div className="bg-orange-100 p-3 rounded-full">
-                            <TrendingUp className="h-8 w-8 text-orange-600" />
+        <PageWrapper showSidebar={true}>
+            <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
+                <div className="container py-8 space-y-8">
+                    {/* Hero Header */}
+                    <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-center space-y-4"
+                    >
+                        <div className="flex items-center justify-center gap-3 mb-4">
+                            <div className="bg-gradient-to-r from-orange-500 to-pink-500 p-3 rounded-2xl shadow-lg">
+                                <TrendingUp className="h-8 w-8 text-white" />
+                            </div>
+                            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+                                Trending Books
+                            </h1>
                         </div>
-                        <h1 className="text-4xl font-bold text-gray-900">Trending Books</h1>
-                    </div>
-                    <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                        Discover what's popular in the BookNest community. Find the most loved and discussed books.
-                    </p>
-                </div>
+                        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                            Discover what's hot in the BookNest community. Find the most loved and discussed books.
+                        </p>
+                    </motion.div>
 
-                {/* Stats Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <Card>
-                        <CardContent className="p-6">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm font-medium text-gray-600">Total Books</p>
-                                    <p className="text-2xl font-bold text-gray-900">{trendingStats.totalBooks}</p>
-                                </div>
-                                <BookOpen className="h-8 w-8 text-blue-600" />
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardContent className="p-6">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm font-medium text-gray-600">This Week</p>
-                                    <p className="text-2xl font-bold text-green-600">{trendingStats.weekBooks}</p>
-                                </div>
-                                <Calendar className="h-8 w-8 text-green-600" />
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardContent className="p-6">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm font-medium text-gray-600">Today</p>
-                                    <p className="text-2xl font-bold text-orange-600">{trendingStats.todayBooks}</p>
-                                </div>
-                                <Flame className="h-8 w-8 text-orange-600" />
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardContent className="p-6">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm font-medium text-gray-600">Total Votes</p>
-                                    <p className="text-2xl font-bold text-purple-600">{trendingStats.totalVotes}</p>
-                                </div>
-                                <ThumbsUp className="h-8 w-8 text-purple-600" />
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
-
-                {/* Sort Options */}
-                <div className="flex flex-wrap gap-3">
-                    <Button
-                        variant={sortBy === 'hot' ? 'default' : 'outline'}
-                        onClick={() => setSortBy('hot')}
-                        className="gap-2"
+                    {/* Enhanced Stats Cards */}
+                    <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 }}
+                        className="grid grid-cols-1 md:grid-cols-4 gap-4"
                     >
-                        <Flame className="h-4 w-4" />
-                        Hot
-                    </Button>
-                    <Button
-                        variant={sortBy === 'new' ? 'default' : 'outline'}
-                        onClick={() => setSortBy('new')}
-                        className="gap-2"
-                    >
-                        <Clock className="h-4 w-4" />
-                        New
-                    </Button>
-                    <Button
-                        variant={sortBy === 'top' ? 'default' : 'outline'}
-                        onClick={() => setSortBy('top')}
-                        className="gap-2"
-                    >
-                        <Star className="h-4 w-4" />
-                        Top Rated
-                    </Button>
-                    <Button
-                        variant={sortBy === 'discussed' ? 'default' : 'outline'}
-                        onClick={() => setSortBy('discussed')}
-                        className="gap-2"
-                    >
-                        <MessageCircle className="h-4 w-4" />
-                        Most Discussed
-                    </Button>
-                </div>
-
-                {/* Top 3 Trending Books */}
-                {trendingBooks.length > 0 && (
-                    <div className="space-y-6">
-                        <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                            <TrendingUp className="h-6 w-6" />
-                            Top Trending
-                        </h2>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            {trendingBooks.slice(0, 3).map((book, index) => (
-                                <Card key={book.id} className="relative overflow-hidden bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
-                                    <div className="absolute top-4 right-4">
-                                        <Badge className={`${index === 0 ? 'bg-yellow-500' :
-                                                index === 1 ? 'bg-gray-400' : 'bg-orange-500'
-                                            } text-white font-bold`}>
-                                            #{index + 1}
-                                        </Badge>
+                        <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900">
+                            <CardContent className="p-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm font-medium text-blue-700 dark:text-blue-300">Total Books</p>
+                                        <p className="text-3xl font-bold text-blue-900 dark:text-blue-100">{trendingStats.totalBooks}</p>
+                                        <p className="text-xs text-blue-600 dark:text-blue-400">In our library</p>
                                     </div>
-                                    <CardContent className="p-6">
-                                        <div className="space-y-4">
-                                            <div>
-                                                <h3 className="font-bold text-lg line-clamp-2">{book.name}</h3>
-                                                <Badge variant="secondary" className="mt-2">{book.genre}</Badge>
+                                    <div className="bg-blue-500 p-3 rounded-xl">
+                                        <BookOpen className="h-6 w-6 text-white" />
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900">
+                            <CardContent className="p-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm font-medium text-green-700 dark:text-green-300">This Week</p>
+                                        <p className="text-3xl font-bold text-green-900 dark:text-green-100">{trendingStats.weekBooks}</p>
+                                        <p className="text-xs text-green-600 dark:text-green-400">New additions</p>
+                                    </div>
+                                    <div className="bg-green-500 p-3 rounded-xl">
+                                        <Calendar className="h-6 w-6 text-white" />
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="border-0 shadow-lg bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950 dark:to-orange-900">
+                            <CardContent className="p-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm font-medium text-orange-700 dark:text-orange-300">Today</p>
+                                        <p className="text-3xl font-bold text-orange-900 dark:text-orange-100">{trendingStats.todayBooks}</p>
+                                        <p className="text-xs text-orange-600 dark:text-orange-400">Hot picks</p>
+                                    </div>
+                                    <div className="bg-orange-500 p-3 rounded-xl">
+                                        <Flame className="h-6 w-6 text-white" />
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900">
+                            <CardContent className="p-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Total Votes</p>
+                                        <p className="text-3xl font-bold text-purple-900 dark:text-purple-100">{trendingStats.totalVotes}</p>
+                                        <p className="text-xs text-purple-600 dark:text-purple-400">Community engagement</p>
+                                    </div>
+                                    <div className="bg-purple-500 p-3 rounded-xl">
+                                        <ThumbsUp className="h-6 w-6 text-white" />
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </motion.div>
+
+                    {/* Enhanced Sort Options */}
+                    <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="flex items-center justify-between"
+                    >
+                        <div className="flex items-center gap-2">
+                            <Filter className="h-5 w-5 text-muted-foreground" />
+                            <span className="text-sm font-medium text-muted-foreground">Sort by:</span>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                            <Button
+                                variant={sortBy === 'hot' ? 'default' : 'outline'}
+                                size="sm"
+                                onClick={() => setSortBy('hot')}
+                                className="gap-2"
+                            >
+                                <Flame className="h-4 w-4" />
+                                Hot
+                            </Button>
+                            <Button
+                                variant={sortBy === 'new' ? 'default' : 'outline'}
+                                size="sm"
+                                onClick={() => setSortBy('new')}
+                                className="gap-2"
+                            >
+                                <Zap className="h-4 w-4" />
+                                New
+                            </Button>
+                            <Button
+                                variant={sortBy === 'top' ? 'default' : 'outline'}
+                                size="sm"
+                                onClick={() => setSortBy('top')}
+                                className="gap-2"
+                            >
+                                <Award className="h-4 w-4" />
+                                Top Rated
+                            </Button>
+                            <Button
+                                variant={sortBy === 'discussed' ? 'default' : 'outline'}
+                                size="sm"
+                                onClick={() => setSortBy('discussed')}
+                                className="gap-2"
+                            >
+                                <MessageCircle className="h-4 w-4" />
+                                Most Discussed
+                            </Button>
+                        </div>
+                    </motion.div>
+
+                    {/* Top 3 Trending Books - Enhanced */}
+                    {trendingBooks.length > 0 && (
+                        <motion.div 
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3 }}
+                            className="space-y-6"
+                        >
+                            <h2 className="text-2xl font-bold flex items-center gap-2">
+                                <TrendingUp className="h-6 w-6 text-primary" />
+                                Top Trending
+                            </h2>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                {trendingBooks.slice(0, 3).map((book, index) => (
+                                    <motion.div
+                                        key={book.id}
+                                        initial={{ opacity: 0, scale: 0.95 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        transition={{ delay: 0.4 + index * 0.1 }}
+                                    >
+                                        <Card className={`relative overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 ${
+                                            index === 0 ? 'bg-gradient-to-br from-yellow-50 to-amber-100 dark:from-yellow-950 dark:to-amber-950' :
+                                            index === 1 ? 'bg-gradient-to-br from-gray-50 to-slate-100 dark:from-gray-950 dark:to-slate-950' : 
+                                            'bg-gradient-to-br from-orange-50 to-red-100 dark:from-orange-950 dark:to-red-950'
+                                        }`}>
+                                            <div className="absolute top-4 right-4">
+                                                <Badge className={`${
+                                                    index === 0 ? 'bg-gradient-to-r from-yellow-500 to-amber-500' :
+                                                    index === 1 ? 'bg-gradient-to-r from-gray-400 to-slate-500' : 
+                                                    'bg-gradient-to-r from-orange-500 to-red-500'
+                                                } text-white font-bold shadow-lg`}>
+                                                    #{index + 1}
+                                                </Badge>
                                             </div>
+                                            <CardContent className="p-6">
+                                                <div className="space-y-4">
+                                                    <div>
+                                                        <h3 className="font-bold text-lg line-clamp-2 mb-2">{book.name}</h3>
+                                                        <Badge variant="secondary" className="capitalize">
+                                                            {book.genre?.replace('_', ' ')}
+                                                        </Badge>
+                                                    </div>
 
-                                            {book.summary && (
-                                                <p className="text-sm text-gray-600 line-clamp-3">{book.summary}</p>
-                                            )}
+                                                    {book.summary && (
+                                                        <p className="text-sm text-muted-foreground line-clamp-3">{book.summary}</p>
+                                                    )}
 
-                                            <div className="flex items-center justify-between text-sm">
-                                                <div className="flex items-center gap-4">
-                                                    <span className="flex items-center gap-1 text-green-600">
-                                                        <ThumbsUp className="h-4 w-4" />
-                                                        {book.upvotes || 0}
-                                                    </span>
-                                                    <span className="flex items-center gap-1 text-blue-600">
-                                                        <MessageCircle className="h-4 w-4" />
-                                                        {book.comments?.length || 0}
-                                                    </span>
+                                                    <div className="flex items-center justify-between text-sm">
+                                                        <div className="flex items-center gap-4">
+                                                            <span className="flex items-center gap-1 text-green-600">
+                                                                <ThumbsUp className="h-4 w-4" />
+                                                                {book.upvotes || 0}
+                                                            </span>
+                                                            <span className="flex items-center gap-1 text-blue-600">
+                                                                <MessageCircle className="h-4 w-4" />
+                                                                {book.comments?.length || 0}
+                                                            </span>
+                                                        </div>
+                                                        <span className="text-muted-foreground">
+                                                            {formatDistanceToNow(new Date(book.createdAt), { addSuffix: true })}
+                                                        </span>
+                                                    </div>
+
+                                                    <Button
+                                                        className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+                                                        onClick={() => router.push(`/books/${book.id}`)}
+                                                    >
+                                                        View Details
+                                                    </Button>
                                                 </div>
-                                                <span className="text-gray-500">
-                                                    {formatDistanceToNow(new Date(book.createdAt), { addSuffix: true })}
-                                                </span>
-                                            </div>
-
-                                            <Button
-                                                className="w-full"
-                                                onClick={() => router.push(`/books/${book.id}`)}
-                                            >
-                                                View Details
-                                            </Button>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </div>
-                    </div>
-                )}
-
-                {/* All Trending Books */}
-                <div className="space-y-6">
-                    <h2 className="text-xl font-semibold text-gray-900">
-                        All Trending Books ({trendingBooks.length})
-                    </h2>
-
-                    {trendingBooks.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                            {trendingBooks.map((book) => (
-                                <BookCard
-                                    key={book.id}
-                                    book={book}
-                                    onComment={(bookId) => router.push(`/books/${bookId}#comments`)}
-                                />
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="text-center py-16">
-                            <div className="bg-gray-100 rounded-full p-6 w-24 h-24 mx-auto mb-6">
-                                <TrendingUp className="h-12 w-12 text-gray-400 mx-auto" />
+                                            </CardContent>
+                                        </Card>
+                                    </motion.div>
+                                ))}
                             </div>
-                            <h3 className="text-xl font-semibold text-gray-900 mb-2">No trending books yet</h3>
-                            <p className="text-gray-600 max-w-md mx-auto">
-                                Books will appear here as the community starts sharing and voting. Be the first to add a book!
-                            </p>
-                        </div>
+                        </motion.div>
                     )}
+
+                    {/* All Trending Books */}
+                    <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5 }}
+                        className="space-y-6"
+                    >
+                        <div className="flex items-center justify-between">
+                            <h2 className="text-xl font-semibold flex items-center gap-2">
+                                <BarChart3 className="h-5 w-5 text-primary" />
+                                All Trending Books
+                                <Badge variant="outline" className="ml-2">
+                                    {trendingBooks.length}
+                                </Badge>
+                            </h2>
+                        </div>
+
+                        {trendingBooks.length > 0 ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                {trendingBooks.map((book, index) => (
+                                    <motion.div
+                                        key={book.id}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.6 + (index % 12) * 0.05 }}
+                                    >
+                                        <BookCard
+                                            book={book}
+                                            onComment={(bookId) => router.push(`/books/${bookId}#comments`)}
+                                        />
+                                    </motion.div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center py-16">
+                                <div className="bg-muted rounded-full p-6 w-24 h-24 mx-auto mb-6">
+                                    <TrendingUp className="h-12 w-12 text-muted-foreground mx-auto" />
+                                </div>
+                                <h3 className="text-xl font-semibold mb-2">No trending books yet</h3>
+                                <p className="text-muted-foreground max-w-md mx-auto">
+                                    Books will appear here as the community starts sharing and voting. Be the first to add a book!
+                                </p>
+                            </div>
+                        )}
+                    </motion.div>
                 </div>
             </div>
-        </div>
+        </PageWrapper>
     );
 }
