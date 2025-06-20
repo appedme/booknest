@@ -11,20 +11,26 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const bookId = searchParams.get("bookId");
+    const limit = searchParams.get("limit");
 
     if (!bookId) {
       return NextResponse.json({ error: "Book ID is required" }, { status: 400 });
     }
 
+    const commentLimit = limit ? parseInt(limit) : undefined;
     const session = await auth();
     const user = session?.user as User;
     const db = getDB();
 
     // Get all comments for the book (both parent comments and replies)
-    const allComments = await db.select()
+    const baseQuery = db.select()
       .from(comments)
       .where(eq(comments.bookId, parseInt(bookId)))
       .orderBy(desc(comments.createdAt));
+
+    const allComments = commentLimit 
+      ? await baseQuery.limit(commentLimit)
+      : await baseQuery;
 
     // Get like counts and user's like status for each comment
     const commentsWithLikes = await Promise.all(
