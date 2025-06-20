@@ -37,7 +37,7 @@ export function Footer() {
     const currentYear = new Date().getFullYear();
 
     return (
-        <footer className="bg-white border-t border-gray-200 mt-auto">
+        <footer className="bg-background border-t mt-auto">
             <div className="container mx-auto px-4 py-12">
                 {/* Main Footer Content */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
@@ -47,9 +47,9 @@ export function Footer() {
                             <div className="bg-primary p-2 rounded-lg">
                                 <BookOpen className="h-5 w-5 text-primary-foreground" />
                             </div>
-                            <span className="font-bold text-xl text-gray-900">BookNest</span>
+                            <span className="font-bold text-xl">BookNest</span>
                         </div>
-                        <p className="text-gray-600 text-sm mb-4 leading-relaxed">
+                        <p className="text-muted-foreground text-sm mb-4 leading-relaxed">
                             Share, discover, and discuss amazing books with our growing community of readers worldwide.
                         </p>
                         <div className="flex space-x-3">
@@ -70,28 +70,28 @@ export function Footer() {
 
                     {/* Quick Links */}
                     <div>
-                        <h3 className="font-semibold text-gray-900 mb-4">Discover</h3>
+                        <h3 className="font-semibold mb-4">Discover</h3>
                         <ul className="space-y-3">
                             <li>
-                                <Link href="/" className="text-gray-600 hover:text-primary text-sm transition-colors flex items-center">
+                                <Link href="/" className="text-muted-foreground hover:text-primary text-sm transition-colors flex items-center">
                                     <BookOpen className="h-3 w-3 mr-2" />
                                     All Books
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/trending" className="text-gray-600 hover:text-primary text-sm transition-colors flex items-center">
+                                <Link href="/trending" className="text-muted-foreground hover:text-primary text-sm transition-colors flex items-center">
                                     <TrendingUp className="h-3 w-3 mr-2" />
                                     Trending
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/genres" className="text-gray-600 hover:text-primary text-sm transition-colors flex items-center">
+                                <Link href="/genres" className="text-muted-foreground hover:text-primary text-sm transition-colors flex items-center">
                                     <MessageCircle className="h-3 w-3 mr-2" />
                                     Genres
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/create" className="text-gray-600 hover:text-primary text-sm transition-colors flex items-center">
+                                <Link href="/create" className="text-muted-foreground hover:text-primary text-sm transition-colors flex items-center">
                                     <ArrowRight className="h-3 w-3 mr-2" />
                                     Share a Book
                                 </Link>
@@ -101,28 +101,28 @@ export function Footer() {
 
                     {/* Community */}
                     <div>
-                        <h3 className="font-semibold text-gray-900 mb-4">Community</h3>
+                        <h3 className="font-semibold mb-4">Community</h3>
                         <ul className="space-y-3">
                             <li>
-                                <Link href="/dashboard" className="text-gray-600 hover:text-primary text-sm transition-colors flex items-center">
+                                <Link href="/dashboard" className="text-muted-foreground hover:text-primary text-sm transition-colors flex items-center">
                                     <Users className="h-3 w-3 mr-2" />
                                     Dashboard
                                 </Link>
                             </li>
                             <li>
-                                <Link href="#" className="text-gray-600 hover:text-primary text-sm transition-colors flex items-center">
+                                <Link href="#" className="text-muted-foreground hover:text-primary text-sm transition-colors flex items-center">
                                     <HelpCircle className="h-3 w-3 mr-2" />
                                     Help Center
                                 </Link>
                             </li>
                             <li>
-                                <Link href="#" className="text-gray-600 hover:text-primary text-sm transition-colors flex items-center">
+                                <Link href="#" className="text-muted-foreground hover:text-primary text-sm transition-colors flex items-center">
                                     <Shield className="h-3 w-3 mr-2" />
                                     Guidelines
                                 </Link>
                             </li>
                             <li>
-                                <Link href="#" className="text-gray-600 hover:text-primary text-sm transition-colors flex items-center">
+                                <Link href="#" className="text-muted-foreground hover:text-primary text-sm transition-colors flex items-center">
                                     <MessageCircle className="h-3 w-3 mr-2" />
                                     Feedback
                                 </Link>
@@ -132,8 +132,8 @@ export function Footer() {
 
                     {/* Newsletter */}
                     <div>
-                        <h3 className="font-semibold text-gray-900 mb-4">Stay Updated</h3>
-                        <p className="text-gray-600 text-sm mb-4">
+                        <h3 className="font-semibold mb-4">Stay Updated</h3>
+                        <p className="text-muted-foreground text-sm mb-4">
                             Get notified about new book recommendations and community updates.
                         </p>
                         <form onSubmit={handleSubscribe} className="space-y-3">
@@ -172,21 +172,25 @@ export function Footer() {
                 {/* Bottom Footer */}
                 <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                     <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6">
-                        <p className="text-gray-600 text-sm">
+                        <p className="text-muted-foreground text-sm">
                             © {currentYear} BookNest. All rights reserved.
                         </p>
                         <div className="flex items-center space-x-4 text-sm">
-                            <Link href="#" className="text-gray-600 hover:text-primary transition-colors flex items-center">
+                            <Link href="/privacy" className="text-muted-foreground hover:text-primary transition-colors flex items-center">
                                 <FileText className="h-3 w-3 mr-1" />
                                 Privacy Policy
                             </Link>
-                            <Link href="#" className="text-gray-600 hover:text-primary transition-colors flex items-center">
+                            <Link href="/terms" className="text-muted-foreground hover:text-primary transition-colors flex items-center">
                                 <FileText className="h-3 w-3 mr-1" />
                                 Terms of Service
                             </Link>
+                            <Link href="/dmca" className="text-muted-foreground hover:text-primary transition-colors flex items-center">
+                                <Shield className="h-3 w-3 mr-1" />
+                                DMCA
+                            </Link>
                         </div>
                     </div>
-                    <div className="flex items-center text-sm text-gray-600">
+                    <div className="flex items-center text-sm text-muted-foreground">
                         <span>Made with</span>
                         <Heart className="h-3 w-3 mx-1 text-red-500 fill-current" />
                         <span>for book lovers</span>

@@ -5,6 +5,7 @@ import { AuthProvider } from "@/wrappers/AuthProvider";
 import { SWRProvider } from "@/wrappers/SWRProvider";
 import { Header } from "@/components/features/Header";
 import { Footer } from "@/components/features/Footer";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,7 +19,24 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "BookNest - Share & Discover Amazing Books",
-  description: "A platform to share and discover amazing books with the community",
+  description: "A platform to share and discover amazing books with the community. Join BookNest to explore reader recommendations, create reading lists, and connect with book lovers.",
+  keywords: ["books", "reading", "book community", "book recommendations", "reading lists", "book sharing", "literature"],
+  openGraph: {
+    title: "BookNest - Share & Discover Amazing Books",
+    description: "Join the BookNest community to share and discover amazing books",
+    type: "website",
+    siteName: "BookNest",
+    images: [{ url: "/og-image.jpg" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "BookNest - Share & Discover Amazing Books",
+    description: "Join the BookNest community to share and discover amazing books",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
@@ -31,17 +49,19 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50`}
       >
-        <AuthProvider>
-          <SWRProvider>
-            <div className="min-h-screen flex flex-col">
-              <Header />
-              <main className="flex-1">
-                {children}
-              </main>
-              <Footer />
-            </div>
-          </SWRProvider>
-        </AuthProvider>
+        <ThemeProvider defaultTheme="system" storageKey="booknest-theme">
+          <AuthProvider>
+            <SWRProvider>
+              <div className="min-h-screen flex flex-col">
+                <Header />
+                <main className="flex-1">
+                  {children}
+                </main>
+                <Footer />
+              </div>
+            </SWRProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

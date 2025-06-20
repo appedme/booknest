@@ -139,37 +139,35 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Hero Section */}
-      <section className="relative py-16 md:py-24">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-purple-600/5"></div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+      {/* Compact Hero Section */}
+      <section className="relative py-6 md:py-8 border-b border-gray-200 dark:border-gray-800">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-purple-600/5 dark:from-blue-600/10 dark:to-purple-600/10"></div>
         <div className="container relative">
-          <div className="text-center max-w-4xl mx-auto space-y-8">
-            <div className="space-y-4">
-              <Badge className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1.5">
+          <div className="text-center max-w-3xl mx-auto space-y-4">
+            <div className="space-y-2">
+              <Badge className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-1 shadow-lg">
                 <Sparkles className="h-3 w-3 mr-1" />
                 Discover Your Next Great Read
               </Badge>
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent leading-tight">
-                Share & Discover
-                <br />
-                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Amazing Books</span>
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 dark:from-white dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent leading-tight">
+                Share & Discover <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Amazing Books</span>
               </h1>
-              <p className="text-xl md:text-2xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
-                Join thousands of book lovers sharing recommendations, discovering hidden gems, and building the ultimate reading community.
+              <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 leading-relaxed max-w-xl mx-auto">
+                Join thousands of book lovers sharing recommendations and discovering hidden gems.
               </p>
             </div>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            
+            <div className="flex flex-col sm:flex-row gap-2 justify-center pt-2">
               <AddBookDialog onBookAdded={handleBookAdded}>
-                <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-xl hover:shadow-2xl transition-all text-lg px-8 py-3">
-                  <Zap className="h-5 w-5 mr-2" />
+                <Button size="default" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all px-6">
+                  <Zap className="h-4 w-4 mr-2" />
                   Share Your Book
                 </Button>
               </AddBookDialog>
               <Link href="/trending">
-                <Button size="lg" variant="outline" className="border-2 hover:bg-gray-50 text-lg px-8 py-3">
-                  <TrendingUp className="h-5 w-5 mr-2" />
+                <Button size="default" variant="outline" className="border-2 hover:bg-gray-50 dark:hover:bg-gray-800 px-6">
+                  <TrendingUp className="h-4 w-4 mr-2" />
                   Explore Trending
                 </Button>
               </Link>
@@ -340,7 +338,7 @@ export default function Home() {
                   key={book.id}
                   book={book}
                   onVoteSuccess={() => mutate()}
-                  onComment={(bookId) => router.push(`/books/${bookId}#comments`)}
+                  onComment={(bookId: number) => router.push(`/books/${bookId}#comments`)}
                 />
               ))}
             </div>
