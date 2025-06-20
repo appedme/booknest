@@ -16,7 +16,18 @@ export function useCommentLikes({ commentId, initialLikeCount = 0, initialIsLike
   const { isAuthenticated } = useAuth();
 
   const toggleLike = async () => {
+    if (!isAuthenticated) {
+      alert('Please sign in to like comments');
+      return;
+    }
+    
     setIsLoading(true);
+    
+    // Optimistic update
+    const newIsLiked = !isLiked;
+    const newLikeCount = newIsLiked ? likeCount + 1 : likeCount - 1;
+    setIsLiked(newIsLiked);
+    setLikeCount(newLikeCount);
     
     try {
       const response = await fetch('/api/comment-likes', {
@@ -27,19 +38,19 @@ export function useCommentLikes({ commentId, initialLikeCount = 0, initialIsLike
         body: JSON.stringify({ commentId }),
       });
 
-      if (response.ok) {
-        const data = await response.json() as { liked: boolean; message: string };
-        setIsLiked(data.liked);
-        setLikeCount(prev => data.liked ? prev + 1 : prev - 1);
-      } else {
+      if (!response.ok) {
         throw new Error('Failed to toggle like');
       }
+
+      const data = await response.json() as { liked: boolean; message: string };
+      // Update with actual server response in case of any discrepancy
+      setIsLiked(data.liked);
+      setLikeCount(prev => data.liked ? (prev < newLikeCount ? newLikeCount : prev) : (prev > newLikeCount ? newLikeCount : prev));
     } catch (error) {
       console.error('Error toggling like:', error);
-      // Revert the optimistic update
-      if (!isAuthenticated) {
-        alert('Please sign in to like comments');
-      }
+      // Revert the optimistic update on error
+      setIsLiked(!newIsLiked);
+      setLikeCount(likeCount);
     } finally {
       setIsLoading(false);
     }

@@ -74,7 +74,7 @@ export function Comment({ comment, bookId, isReply = false }: CommentProps) {
 
   return (
     <div className={`${isReply ? 'ml-8 mt-3' : ''}`}>
-      <div className="bg-muted/50 rounded-lg p-4">
+      <div className={`rounded-lg p-4 ${isReply ? 'bg-muted/30 border border-muted' : 'bg-muted/50'}`}>
         <div className="flex items-start gap-3">
           <div className="bg-primary/10 rounded-full p-2 flex-shrink-0">
             <User className="h-4 w-4 text-primary" />
@@ -135,40 +135,43 @@ export function Comment({ comment, bookId, isReply = false }: CommentProps) {
       {/* Reply form */}
       {showReplyForm && (
         <div className="mt-3 ml-8">
-          <form onSubmit={handleReplySubmit} className="space-y-3">
-            <Textarea
-              placeholder="Write a reply..."
-              value={replyContent}
-              onChange={(e) => setReplyContent(e.target.value)}
-              rows={2}
-              className="resize-none"
-            />
-            <div className="flex gap-2">
-              <Button 
-                type="submit" 
-                size="sm" 
-                disabled={isSubmittingReply || !replyContent.trim()}
-              >
-                {isSubmittingReply ? (
-                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                ) : (
-                  <Send className="h-4 w-4 mr-1" />
-                )}
-                Reply
-              </Button>
-              <Button 
-                type="button" 
-                variant="ghost" 
-                size="sm"
-                onClick={() => {
-                  setShowReplyForm(false);
-                  setReplyContent("");
-                }}
-              >
-                Cancel
-              </Button>
-            </div>
-          </form>
+          <div className="bg-muted/30 rounded-lg p-4 border border-muted">
+            <form onSubmit={handleReplySubmit} className="space-y-3">
+              <Textarea
+                placeholder="Write a reply..."
+                value={replyContent}
+                onChange={(e) => setReplyContent(e.target.value)}
+                rows={3}
+                className="resize-none border-muted-foreground/20 focus:border-primary"
+              />
+              <div className="flex gap-2">
+                <Button 
+                  type="submit" 
+                  size="sm" 
+                  disabled={isSubmittingReply || !replyContent.trim()}
+                  className="font-medium"
+                >
+                  {isSubmittingReply ? (
+                    <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                  ) : (
+                    <Send className="h-4 w-4 mr-1" />
+                  )}
+                  Post Reply
+                </Button>
+                <Button 
+                  type="button" 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => {
+                    setShowReplyForm(false);
+                    setReplyContent("");
+                  }}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 
