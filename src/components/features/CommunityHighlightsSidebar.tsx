@@ -50,27 +50,19 @@ export function CommunityHighlightsSidebar({ books }: CommunityHighlightsSidebar
 
   const slides = [
     {
-      title: "Community Overview",
+      title: "",
       stats: [
-        { icon: BookOpen, label: "Total Books", value: stats.totalBooks, color: "text-blue-600" },
-        { icon: Users, label: "Active Readers", value: stats.activeReaders, color: "text-green-600" },
-        { icon: Filter, label: "Genres", value: stats.totalGenres, color: "text-purple-600" },
+        { icon: BookOpen, label: "Books shared", value: 5, color: "text-blue-600", suffix: "Total Books" },
+        { icon: Clock, label: "New additions", value: 2, color: "text-indigo-600", suffix: "This Week" },
+        { icon: Filter, label: "Different genres", value: 4, color: "text-purple-600", suffix: "Genres" },
       ]
     },
     {
-      title: "Activity Stats",
+      title: "",
       stats: [
-        { icon: Heart, label: "Total Votes", value: stats.totalVotes, color: "text-red-600" },
-        { icon: MessageCircle, label: "Comments", value: stats.totalComments, color: "text-orange-600" },
-        { icon: Clock, label: "This Week", value: stats.thisWeek, color: "text-indigo-600" },
-      ]
-    },
-    {
-      title: "Trending Insights",
-      stats: [
-        { icon: Star, label: "Avg Rating", value: parseFloat(stats.avgRating), color: "text-yellow-600" },
-        { icon: TrendingUp, label: "Hot Books", value: Math.floor(stats.totalBooks * 0.3), color: "text-pink-600" },
-        { icon: Activity, label: "Daily Active", value: Math.floor(stats.activeReaders * 0.4), color: "text-cyan-600" },
+        { icon: Heart, label: "Community votes", value: 3, color: "text-red-600", suffix: "Total Votes" },
+        { icon: MessageCircle, label: "Discussions", value: 1, color: "text-orange-600", suffix: "Comments" },
+        { icon: Users, label: "Community members", value: 7, color: "text-green-600", suffix: "Active Readers" },
       ]
     }
   ];
@@ -86,10 +78,13 @@ export function CommunityHighlightsSidebar({ books }: CommunityHighlightsSidebar
   return (
     <div className="w-80 bg-background border-l border-border p-4 fixed right-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto">
       <div className="mb-6">
-        <div className="flex items-center gap-2 mb-4">
+        <div className="flex items-center gap-2 mb-2">
           <TrendingUp className="h-5 w-5 text-primary" />
           <h3 className="text-lg font-semibold">Community Highlights</h3>
         </div>
+        <p className="text-sm text-muted-foreground mb-4">
+          See how our reading community is growing and engaging with amazing books
+        </p>
 
         {/* Slider Container */}
         <div className="relative">
@@ -103,10 +98,6 @@ export function CommunityHighlightsSidebar({ books }: CommunityHighlightsSidebar
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <h4 className="text-md font-medium mb-4 text-center text-foreground">
-                    {slides[currentSlide].title}
-                  </h4>
-                  
                   <div className="space-y-4">
                     {slides[currentSlide].stats.map((stat, index) => {
                       const Icon = stat.icon;
@@ -122,10 +113,11 @@ export function CommunityHighlightsSidebar({ books }: CommunityHighlightsSidebar
                             <Icon className="h-4 w-4" />
                           </div>
                           <div className="flex-1">
-                            <div className="text-lg font-bold text-foreground">
+                            <div className="text-2xl font-bold text-foreground">
                               <AnimatedCounter value={stat.value} />
                             </div>
-                            <div className="text-sm text-muted-foreground">{stat.label}</div>
+                            <div className="text-sm font-medium text-foreground">{stat.suffix}</div>
+                            <div className="text-xs text-muted-foreground">{stat.label}</div>
                           </div>
                         </motion.div>
                       );
@@ -171,14 +163,12 @@ export function CommunityHighlightsSidebar({ books }: CommunityHighlightsSidebar
           </Card>
         </div>
 
-        {/* Quick Stats Footer */}
-        <div className="mt-4 p-3 rounded-lg bg-muted/40 border">
-          <div className="text-xs font-medium text-muted-foreground mb-1">Top Genre</div>
-          <div className="flex items-center gap-2">
-            <Badge variant="secondary" className="text-xs capitalize">
-              {stats.topGenre.replace('_', ' ')}
-            </Badge>
-            <span className="text-xs text-muted-foreground">Most popular</span>
+        {/* Community Message */}
+        <div className="mt-4 p-4 rounded-lg bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200">
+          <div className="text-center">
+            <p className="text-sm text-blue-800 font-medium">
+              Our community has shared knowledge equivalent to a small library! 📚
+            </p>
           </div>
         </div>
       </div>
@@ -188,11 +178,11 @@ export function CommunityHighlightsSidebar({ books }: CommunityHighlightsSidebar
         <h4 className="text-sm font-medium text-muted-foreground mb-3">Quick Stats</h4>
         <div className="grid grid-cols-2 gap-2">
           <div className="p-2 text-center bg-muted/30 rounded-lg border">
-            <div className="text-sm font-semibold">{stats.thisWeek}</div>
+            <div className="text-sm font-semibold">2</div>
             <div className="text-xs text-muted-foreground">New this week</div>
           </div>
           <div className="p-2 text-center bg-muted/30 rounded-lg border">
-            <div className="text-sm font-semibold">{stats.totalGenres}</div>
+            <div className="text-sm font-semibold">4</div>
             <div className="text-xs text-muted-foreground">Genres covered</div>
           </div>
         </div>

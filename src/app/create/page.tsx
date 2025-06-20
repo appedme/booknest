@@ -4,10 +4,10 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AddBookDialog } from "@/components/features/AddBookDialog";
+import { AddBookForm } from "@/components/features/AddBookForm";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, BookOpen, Plus, Sparkles, Check, Users, TrendingUp } from "lucide-react";
+import { ArrowLeft, BookOpen, Sparkles, Check, Users, TrendingUp } from "lucide-react";
 import Link from "next/link";
 
 export default function CreateBookPage() {
@@ -101,94 +101,73 @@ export default function CreateBookPage() {
 
         {/* Main Content */}
         <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Add Book Form */}
-            <Card className="border-0 shadow-xl bg-white">
-              <CardHeader className="text-center pb-6">
-                <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-full p-4 w-fit mx-auto mb-4">
-                  <Plus className="h-8 w-8 text-white" />
-                </div>
-                <CardTitle className="text-2xl font-bold text-gray-900">
-                  Ready to Share?
-                </CardTitle>
-                <p className="text-gray-600">
-                  Click below to open the book creation form and share your recommendation.
-                </p>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center">
-                  <AddBookDialog redirectToDashboard={true}>
-                    <Button
-                      size="lg"
-                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all text-lg py-6"
-                    >
-                      <Plus className="h-5 w-5 mr-2" />
-                      Add Book Details
-                    </Button>
-                  </AddBookDialog>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="lg:col-span-2">
+              <AddBookForm redirectToDashboard={true} />
+            </div>
 
             {/* Guidelines */}
-            <Card className="border-0 shadow-xl bg-white">
-              <CardHeader>
-                <CardTitle className="flex items-center text-xl font-bold text-gray-900">
-                  <Check className="h-5 w-5 mr-2 text-green-600" />
-                  Best Practices
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-start space-x-3">
-                    <div className="bg-blue-100 rounded-full p-1.5 mt-0.5">
-                      <Check className="h-3 w-3 text-blue-600" />
+            <div className="lg:col-span-1">
+              <Card className="border-0 shadow-xl bg-white h-fit">
+                <CardHeader>
+                  <CardTitle className="flex items-center text-xl font-bold text-gray-900">
+                    <Check className="h-5 w-5 mr-2 text-green-600" />
+                    Best Practices
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex items-start space-x-3">
+                      <div className="bg-blue-100 rounded-full p-1.5 mt-0.5">
+                        <Check className="h-3 w-3 text-blue-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 mb-1">Quality Links</h4>
+                        <p className="text-sm text-gray-600">Use legitimate book URLs (Amazon, Goodreads, etc.)</p>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-medium text-gray-900 mb-1">Quality Links</h4>
-                      <p className="text-sm text-gray-600">Use legitimate book URLs (Amazon, Goodreads, etc.)</p>
+
+                    <div className="flex items-start space-x-3">
+                      <div className="bg-green-100 rounded-full p-1.5 mt-0.5">
+                        <Check className="h-3 w-3 text-green-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 mb-1">High-Quality Images</h4>
+                        <p className="text-sm text-gray-600">Use clear, high-resolution book cover images</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start space-x-3">
+                      <div className="bg-purple-100 rounded-full p-1.5 mt-0.5">
+                        <Check className="h-3 w-3 text-purple-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 mb-1">Compelling Summary</h4>
+                        <p className="text-sm text-gray-600">Write engaging descriptions to attract readers</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start space-x-3">
+                      <div className="bg-orange-100 rounded-full p-1.5 mt-0.5">
+                        <Check className="h-3 w-3 text-orange-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 mb-1">Accurate Genre</h4>
+                        <p className="text-sm text-gray-600">Choose the most appropriate category</p>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="flex items-start space-x-3">
-                    <div className="bg-green-100 rounded-full p-1.5 mt-0.5">
-                      <Check className="h-3 w-3 text-green-600" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-gray-900 mb-1">High-Quality Images</h4>
-                      <p className="text-sm text-gray-600">Use clear, high-resolution book cover images</p>
-                    </div>
+                  <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+                    <p className="text-sm text-blue-800 font-medium mb-2">💡 Pro Tip</p>
+                    <p className="text-sm text-blue-700">
+                      Books with detailed summaries and proper categorization get more engagement from the community!
+                    </p>
                   </div>
-
-                  <div className="flex items-start space-x-3">
-                    <div className="bg-purple-100 rounded-full p-1.5 mt-0.5">
-                      <Check className="h-3 w-3 text-purple-600" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-gray-900 mb-1">Compelling Summary</h4>
-                      <p className="text-sm text-gray-600">Write engaging descriptions to attract readers</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start space-x-3">
-                    <div className="bg-orange-100 rounded-full p-1.5 mt-0.5">
-                      <Check className="h-3 w-3 text-orange-600" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-gray-900 mb-1">Accurate Genre</h4>
-                      <p className="text-sm text-gray-600">Choose the most appropriate category</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                  <p className="text-sm text-blue-800 font-medium mb-2">💡 Pro Tip</p>
-                  <p className="text-sm text-blue-700">
-                    Books with detailed summaries and proper categorization get more engagement from the community!
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </div>

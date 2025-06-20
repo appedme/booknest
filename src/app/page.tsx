@@ -338,6 +338,18 @@ export default function Home() {
           {/* Sidebar */}
           <div className="lg:col-span-1">
             <div className="sticky top-24 space-y-6">
+              {/* Search Bar */}
+              <div className="bg-card border rounded-xl p-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                  <Input
+                    placeholder="Search books, authors, or genres..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10 h-11"
+                  />
+                </div>
+              </div>
               {/* Active Discussions */}
               <Card className="border">
                 <CardContent className="p-6">
