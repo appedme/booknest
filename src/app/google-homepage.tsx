@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from 'react';
-import { GoogleBooksLayout } from '@/components/features/GoogleBooksLayout';
+import { GoogleBooksHeader } from '@/components/features/GoogleBooksHeader';
 import { GoogleBookCard } from '@/components/features/GoogleBookCard';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -14,21 +14,24 @@ import {
   Clock,
   BookOpen,
   ArrowRight,
+  Filter,
   Grid3X3,
   List
 } from 'lucide-react';
 import { useBooks } from '@/hooks/useBooks';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 
 type ViewMode = 'grid' | 'list';
 type SortOption = 'trending' | 'recent' | 'popular' | 'title';
 
-export default function Home() {
+export default function GoogleBooksHomePage() {
   const { books, isLoading, isError, mutate } = useBooks();
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [sortBy, setSortBy] = useState<SortOption>('trending');
+  const router = useRouter();
 
   // Filter and sort books
   const processedBooks = useMemo(() => {
@@ -63,28 +66,33 @@ export default function Home() {
   const handleVote = async (bookId: number, type: 'up' | 'down') => {
     // Implement voting logic here
     console.log(`Voting ${type} for book ${bookId}`);
+    // You can implement the actual voting API call here
     mutate();
   };
 
   if (isLoading) {
     return (
-      <GoogleBooksLayout>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <div key={i} className="space-y-3">
-              <div className="aspect-[3/4] bg-gray-200 rounded-lg animate-pulse" />
-              <div className="h-4 bg-gray-200 rounded animate-pulse" />
-              <div className="h-3 bg-gray-200 rounded animate-pulse w-3/4" />
-            </div>
-          ))}
+      <div className="min-h-screen bg-white">
+        <GoogleBooksHeader />
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+            {Array.from({ length: 12 }).map((_, i) => (
+              <div key={i} className="space-y-3">
+                <div className="aspect-[3/4] bg-gray-200 rounded-lg animate-pulse" />
+                <div className="h-4 bg-gray-200 rounded animate-pulse" />
+                <div className="h-3 bg-gray-200 rounded animate-pulse w-3/4" />
+              </div>
+            ))}
+          </div>
         </div>
-      </GoogleBooksLayout>
+      </div>
     );
   }
 
   if (isError) {
     return (
-      <GoogleBooksLayout>
+      <div className="min-h-screen bg-white">
+        <GoogleBooksHeader />
         <div className="max-w-2xl mx-auto px-4 py-16 text-center">
           <div className="mb-8">
             <BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
@@ -98,64 +106,78 @@ export default function Home() {
             Try again
           </Button>
         </div>
-      </GoogleBooksLayout>
+      </div>
     );
   }
 
   return (
-    <GoogleBooksLayout 
-      showHero={true}
-      heroTitle="Discover your next great read"
-      heroDescription="Explore millions of books, get recommendations, and connect with other readers"
-      heroContent={
-        <div className="relative">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-          <Input
-            type="text"
-            placeholder="Search books, authors, or genres..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-12 pr-4 py-4 text-lg border-2 border-gray-300 rounded-full shadow-sm hover:shadow-md focus:shadow-lg transition-shadow duration-200"
-          />
+    <div className="min-h-screen bg-white">
+      <GoogleBooksHeader />
+      
+      {/* Hero Section with Search */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-4xl mx-auto px-4 py-12 text-center">
+          <h1 className="text-4xl font-normal text-gray-900 mb-2">
+            Discover your next great read
+          </h1>
+          <p className="text-lg text-gray-600 mb-8">
+            Explore millions of books, get recommendations, and connect with other readers
+          </p>
+          
+          {/* Main Search Bar */}
+          <div className="relative max-w-2xl mx-auto">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Input
+                type="text"
+                placeholder="Search books, authors, or genres..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-12 pr-4 py-4 text-lg border-2 border-gray-300 rounded-full shadow-sm hover:shadow-md focus:shadow-lg transition-shadow duration-200"
+              />
+            </div>
+          </div>
         </div>
-      }
-    >
-      {/* Stats and Quick Actions */}
-      <div className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="border border-gray-200 hover:shadow-md transition-shadow">
-          <CardContent className="p-6 text-center">
-            <TrendingUp className="h-8 w-8 text-google-blue mx-auto mb-3" />
-            <h3 className="font-medium text-gray-900 mb-1">Trending Now</h3>
-            <p className="text-sm text-gray-600">
-              {books?.filter(b => b.upvotes > 0).length || 0} popular books
-            </p>
-          </CardContent>
-        </Card>
-        
-        <Card className="border border-gray-200 hover:shadow-md transition-shadow">
-          <CardContent className="p-6 text-center">
-            <Clock className="h-8 w-8 text-google-blue mx-auto mb-3" />
-            <h3 className="font-medium text-gray-900 mb-1">Recently Added</h3>
-            <p className="text-sm text-gray-600">
-              {books?.filter(b => {
-                const weekAgo = new Date();
-                weekAgo.setDate(weekAgo.getDate() - 7);
-                return new Date(b.createdAt) > weekAgo;
-              }).length || 0} new this week
-            </p>
-          </CardContent>
-        </Card>
-        
-        <Card className="border border-gray-200 hover:shadow-md transition-shadow">
-          <CardContent className="p-6 text-center">
-            <Star className="h-8 w-8 text-google-blue mx-auto mb-3" />
-            <h3 className="font-medium text-gray-900 mb-1">Community Favorites</h3>
-            <p className="text-sm text-gray-600">
-              {books?.reduce((sum, book) => sum + book.upvotes, 0) || 0} total recommendations
-            </p>
-          </CardContent>
-        </Card>
       </div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Stats and Quick Actions */}
+        <div className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card className="border border-gray-200 hover:shadow-md transition-shadow">
+            <CardContent className="p-6 text-center">
+              <TrendingUp className="h-8 w-8 text-google-blue mx-auto mb-3" />
+              <h3 className="font-medium text-gray-900 mb-1">Trending Now</h3>
+              <p className="text-sm text-gray-600">
+                {books?.filter(b => b.upvotes > 0).length || 0} popular books
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card className="border border-gray-200 hover:shadow-md transition-shadow">
+            <CardContent className="p-6 text-center">
+              <Clock className="h-8 w-8 text-google-blue mx-auto mb-3" />
+              <h3 className="font-medium text-gray-900 mb-1">Recently Added</h3>
+              <p className="text-sm text-gray-600">
+                {books?.filter(b => {
+                  const weekAgo = new Date();
+                  weekAgo.setDate(weekAgo.getDate() - 7);
+                  return new Date(b.createdAt) > weekAgo;
+                }).length || 0} new this week
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card className="border border-gray-200 hover:shadow-md transition-shadow">
+            <CardContent className="p-6 text-center">
+              <Star className="h-8 w-8 text-google-blue mx-auto mb-3" />
+              <h3 className="font-medium text-gray-900 mb-1">Community Favorites</h3>
+              <p className="text-sm text-gray-600">
+                {books?.reduce((sum, book) => sum + book.upvotes, 0) || 0} total recommendations
+              </p>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Filters and View Controls */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
@@ -268,16 +290,17 @@ export default function Home() {
             </Button>
           </div>
         )}
+      </div>
 
-        {/* Quick Actions Floating Button */}
-        <Link href="/create">
-          <Button 
-            className="fixed bottom-6 right-6 rounded-full h-14 w-14 p-0 bg-google-blue hover:bg-google-blue-dark shadow-lg"
-            size="lg"
-          >
-            <BookOpen className="h-6 w-6" />
-          </Button>
-        </Link>
-    </GoogleBooksLayout>
+      {/* Quick Actions Floating Button */}
+      <Link href="/create">
+        <Button 
+          className="fixed bottom-6 right-6 rounded-full h-14 w-14 p-0 bg-google-blue hover:bg-google-blue-dark shadow-lg"
+          size="lg"
+        >
+          <BookOpen className="h-6 w-6" />
+        </Button>
+      </Link>
+    </div>
   );
 }

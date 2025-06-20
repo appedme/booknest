@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useBook } from "@/hooks/useBooks";
 import { useVoting } from "@/hooks/useVoting";
+import { GoogleBooksLayout } from "@/components/features/GoogleBooksLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -163,140 +164,135 @@ export default function BookPage() {
 
     if (bookLoading || commentsLoading) {
         return (
-            <div className="min-h-screen bg-background">
-                <div className="container mx-auto px-4 py-8">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="space-y-8"
-                    >
-                        {/* Header Skeleton */}
-                        <div className="flex items-center gap-4">
-                            <div className="h-8 w-8 bg-muted/50 rounded animate-pulse"></div>
-                            <div className="h-4 w-32 bg-muted/50 rounded animate-pulse"></div>
-                        </div>
+            <GoogleBooksLayout>
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="space-y-8"
+                >
+                    {/* Header Skeleton */}
+                    <div className="flex items-center gap-4 mb-6">
+                        <div className="h-8 w-8 bg-gray-200 rounded animate-pulse"></div>
+                        <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
+                    </div>
 
-                        {/* Main Content Skeleton */}
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                            {/* Left Column */}
-                            <div className="lg:col-span-2 space-y-6">
-                                {/* Hero Section */}
-                                <Card className="p-8">
-                                    <div className="flex flex-col md:flex-row gap-8">
-                                        <div className="w-48 h-72 bg-muted/50 rounded-lg animate-pulse"></div>
-                                        <div className="flex-1 space-y-4">
-                                            <div className="h-8 bg-muted/50 rounded w-3/4 animate-pulse"></div>
-                                            <div className="h-6 bg-muted/50 rounded w-1/2 animate-pulse"></div>
-                                            <div className="h-32 bg-muted/50 rounded animate-pulse"></div>
-                                            <div className="flex gap-4">
-                                                <div className="h-10 w-32 bg-muted/50 rounded animate-pulse"></div>
-                                                <div className="h-10 w-24 bg-muted/50 rounded animate-pulse"></div>
-                                            </div>
+                    {/* Main Content Skeleton */}
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        {/* Left Column */}
+                        <div className="lg:col-span-2 space-y-6">
+                            {/* Hero Section */}
+                            <Card className="p-8 border border-gray-200">
+                                <div className="flex flex-col md:flex-row gap-8">
+                                    <div className="w-48 h-72 bg-gray-200 rounded-lg animate-pulse"></div>
+                                    <div className="flex-1 space-y-4">
+                                        <div className="h-8 bg-gray-200 rounded w-3/4 animate-pulse"></div>
+                                        <div className="h-6 bg-gray-200 rounded w-1/2 animate-pulse"></div>
+                                        <div className="h-32 bg-gray-200 rounded animate-pulse"></div>
+                                        <div className="flex gap-4">
+                                            <div className="h-10 w-32 bg-gray-200 rounded animate-pulse"></div>
+                                            <div className="h-10 w-24 bg-gray-200 rounded animate-pulse"></div>
                                         </div>
                                     </div>
-                                </Card>
+                                </div>
+                            </Card>
 
-                                {/* Comments Skeleton */}
-                                <Card className="p-6">
-                                    <div className="space-y-6">
-                                        <div className="h-6 bg-muted/50 rounded w-32 animate-pulse"></div>
-                                        {Array(3).fill(0).map((_, i) => (
-                                            <div key={i} className="space-y-3">
-                                                <div className="flex gap-3">
-                                                    <div className="h-10 w-10 bg-muted/50 rounded-full animate-pulse"></div>
-                                                    <div className="flex-1 space-y-2">
-                                                        <div className="h-4 bg-muted/50 rounded w-24 animate-pulse"></div>
-                                                        <div className="h-16 bg-muted/50 rounded animate-pulse"></div>
-                                                    </div>
+                            {/* Comments Skeleton */}
+                            <Card className="p-6 border border-gray-200">
+                                <div className="space-y-6">
+                                    <div className="h-6 bg-gray-200 rounded w-32 animate-pulse"></div>
+                                    {Array(3).fill(0).map((_, i) => (
+                                        <div key={i} className="space-y-3">
+                                            <div className="flex gap-3">
+                                                <div className="h-10 w-10 bg-gray-200 rounded-full animate-pulse"></div>
+                                                <div className="flex-1 space-y-2">
+                                                    <div className="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
+                                                    <div className="h-16 bg-gray-200 rounded animate-pulse"></div>
                                                 </div>
                                             </div>
-                                        ))}
+                                        </div>
+                                    ))}
+                                </div>
+                            </Card>
+                        </div>
+
+                        {/* Right Column */}
+                        <div className="space-y-6">
+                            {Array(3).fill(0).map((_, i) => (
+                                <Card key={i} className="p-6 border border-gray-200">
+                                    <div className="space-y-4">
+                                        <div className="h-6 bg-gray-200 rounded w-32 animate-pulse"></div>
+                                        <div className="h-20 bg-gray-200 rounded animate-pulse"></div>
                                     </div>
                                 </Card>
-                            </div>
-
-                            {/* Right Column */}
-                            <div className="space-y-6">
-                                {Array(3).fill(0).map((_, i) => (
-                                    <Card key={i} className="p-6">
-                                        <div className="space-y-4">
-                                            <div className="h-6 bg-muted/50 rounded w-32 animate-pulse"></div>
-                                            <div className="h-20 bg-muted/50 rounded animate-pulse"></div>
-                                        </div>
-                                    </Card>
-                                ))}
-                            </div>
+                            ))}
                         </div>
-                    </motion.div>
-                </div>
-            </div>
+                    </div>
+                </motion.div>
+            </GoogleBooksLayout>
         );
     }
 
     if (bookError || !book) {
         return (
-            <div className="min-h-screen bg-background">
-                <div className="container mx-auto px-4 py-16">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="text-center max-w-md mx-auto"
-                    >
-                        <div className="bg-destructive/10 rounded-full p-8 w-24 h-24 mx-auto mb-6">
-                            <BookOpen className="h-8 w-8 text-destructive mx-auto" />
-                        </div>
-                        <h2 className="text-3xl font-bold text-foreground mb-4">Book not found</h2>
-                        <p className="text-muted-foreground mb-8 leading-relaxed">
+            <GoogleBooksLayout>
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-center py-16"
+                >
+                    <div className="max-w-md mx-auto">
+                        <BookOpen className="h-16 w-16 text-gray-300 mx-auto mb-6" />
+                        <h2 className="text-2xl font-normal text-gray-900 mb-4">Book not found</h2>
+                        <p className="text-gray-600 mb-8 leading-relaxed">
                             The book you're looking for doesn't exist or has been removed from our collection.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <Button asChild className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                            <Button asChild className="bg-google-blue hover:bg-google-blue-dark text-white">
                                 <Link href="/">
                                     <ArrowLeft className="h-4 w-4 mr-2" />
                                     Back to Books
                                 </Link>
                             </Button>
-                            <Button variant="outline" asChild>
+                            <Button variant="outline" asChild className="border-gray-300">
                                 <Link href="/create">
                                     Add a Book
                                 </Link>
                             </Button>
                         </div>
-                    </motion.div>
-                </div>
-            </div>
+                    </div>
+                </motion.div>
+            </GoogleBooksLayout>
         );
     }
 
     return (
-        <div className="min-h-screen bg-background">
-            <div className="container mx-auto px-4 py-8">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                >
-                    {/* Header */}
-                    <div className="flex items-center justify-between mb-8">
-                        <Link 
-                            href="/" 
-                            className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors group"
+        <GoogleBooksLayout>
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+            >
+                {/* Header */}
+                <div className="flex items-center justify-between mb-8">
+                    <Link 
+                        href="/" 
+                        className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors group"
+                    >
+                        <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform duration-200" />
+                        Back to books
+                    </Link>
+                    
+                    <div className="flex items-center gap-2">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={handleBookmark}
+                            className={cn("hover:scale-105 transition-all duration-200", 
+                                isBookmarked && "text-yellow-500"
+                            )}
                         >
-                            <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform duration-200" />
-                            Back to books
-                        </Link>
-                        
-                        <div className="flex items-center gap-2">
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={handleBookmark}
-                                className={cn("hover:scale-105 transition-all duration-200", 
-                                    isBookmarked && "text-yellow-500"
-                                )}
-                            >
-                                <Bookmark className={cn("h-4 w-4", isBookmarked && "fill-current")} />
-                            </Button>
+                            <Bookmark className={cn("h-4 w-4", isBookmarked && "fill-current")} />
+                        </Button>
                             <div className="relative">
                                 <Button
                                     variant="ghost"
@@ -888,7 +884,6 @@ export default function BookPage() {
                         </div>
                     </div>
                 </motion.div>
-            </div>
-        </div>
-    );
-}
+            </GoogleBooksLayout>
+        );
+    }

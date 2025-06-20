@@ -4,7 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/wrappers/AuthProvider";
 import { SWRProvider } from "@/wrappers/SWRProvider";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Header } from "@/components/features/Header";
+import { GoogleBooksHeader } from "@/components/features/GoogleBooksHeader";
 import { Footer } from "@/components/features/Footer";
 
 const inter = Inter({
@@ -53,8 +53,8 @@ export default function RootLayout({
         >
           <AuthProvider>
             <SWRProvider>
-              <div className="min-h-screen flex flex-col">
-                <Header />
+              <div className="min-h-screen flex flex-col bg-white">
+                <GoogleBooksHeader />
                 <div className="flex flex-1">
                   <main className="flex-1">
                     {children}

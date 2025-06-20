@@ -1,6 +1,7 @@
 "use client";
 
 import { useBooks } from "@/hooks/useBooks";
+import { GoogleBooksLayout } from "@/components/features/GoogleBooksLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -43,28 +44,29 @@ export default function AuthorsPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
+      <GoogleBooksLayout>
+        <div className="flex items-center justify-center py-16">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-google-blue"></div>
+        </div>
+      </GoogleBooksLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
-      <div className="container py-12">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-            Featured Authors
-          </h1>
-          <p className="text-xl text-muted-foreground">
-            Discover the brilliant minds sharing knowledge on BookNest
-          </p>
-        </div>
+    <GoogleBooksLayout>
+      {/* Header */}
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-normal mb-4 text-gray-900">
+          Featured Authors
+        </h1>
+        <p className="text-xl text-gray-600">
+          Discover the brilliant minds sharing knowledge on BookNest
+        </p>
+      </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <Card>
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <Card className="border border-gray-200">
             <CardContent className="p-6 text-center">
               <User className="h-12 w-12 mx-auto mb-4 text-primary" />
               <h3 className="text-2xl font-bold">{authors.length}</h3>
@@ -137,14 +139,13 @@ export default function AuthorsPage() {
 
         {authors.length === 0 && (
           <div className="text-center py-12">
-            <User className="h-24 w-24 mx-auto mb-4 text-muted-foreground/50" />
-            <h3 className="text-xl font-semibold mb-2">No Authors Found</h3>
-            <p className="text-muted-foreground">
+            <User className="h-24 w-24 mx-auto mb-4 text-gray-300" />
+            <h3 className="text-xl font-normal mb-2 text-gray-900">No Authors Found</h3>
+            <p className="text-gray-600">
               Be the first to share a book and become a featured author!
             </p>
           </div>
         )}
-      </div>
-    </div>
-  );
-}
+      </GoogleBooksLayout>
+    );
+  }

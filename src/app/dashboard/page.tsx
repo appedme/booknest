@@ -1,276 +1,211 @@
 "use client";
-
-import { useAuth } from "@/hooks/useAuth";
 import { useBooks } from "@/hooks/useBooks";
-import { Button } from "@/components/ui/button";
+import { GoogleBooksLayout } from "@/components/features/GoogleBooksLayout";
+import { GoogleBooksGrid } from "@/components/features/GoogleBooksGrid";
 import { Card, CardContent } from "@/components/ui/card";
-import { AddBookDialog } from "@/components/features/AddBookDialog";
-import { BookCard } from "@/components/features/BookCard";
-import {
-    BookOpen,
-    Plus,
-    TrendingUp,
-    MessageCircle,
-    Filter,
-    Grid3X3,
-    List
-} from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState, useMemo } from "react";
-import type { Book } from "@/types";
-
-type ViewMode = 'grid' | 'list';
-type FilterMode = 'all' | 'mine' | 'recent';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { BookOpen, Heart, MessageCircle, Calendar, User, PlusCircle } from "lucide-react";
+import { useMemo, useState } from "react"; import Link from "next/link";
 
 export default function DashboardPage() {
-    const { user, isAuthenticated, isLoading } = useAuth();
-    const { books, isLoading: booksLoading, mutate } = useBooks();
-    const router = useRouter();
-    const [viewMode, setViewMode] = useState<ViewMode>('grid');
-    const [filter, setFilter] = useState<FilterMode>('all');
+    const { books, isLoading, mutate } = useBooks();
+    const [viewFilter, setViewFilter] = useState<'all' | 'recent'>('all');
 
-    useEffect(() => {
-        if (!isLoading && !isAuthenticated) {
-            router.push("/auth/signin");
+    // Calculate basic statistics and filtered books
+    const { stats, filteredBooks } = useMemo(() => {
+        if (!books) {
+            return {
+                stats: {
+                    totalBooks: 0,
+                    totalVotes: 0,
+                    totalComments: 0,
+                    booksThisWeek: 0
+                },
+                filteredBooks: []
+            };
         }
-    }, [isAuthenticated, isLoading, router]);
 
-    // Filter books based on selected filter
-    const filteredBooks = useMemo(() => {
-        if (!books) return [];
+        const weekAgo = new Date();
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        const recentBooks = books.filter(book => new Date(book.createdAt) > weekAgo);
 
-        switch (filter) {
-            case 'mine':
-                return books.filter(book => book.userId === user?.id);
+        let filtered = books;
+        switch (viewFilter) {
             case 'recent':
-                const threeDaysAgo = Date.now() - (3 * 24 * 60 * 60 * 1000);
-                return books.filter(book => new Date(book.createdAt).getTime() > threeDaysAgo);
+                filtered = recentBooks;
+                break;
             default:
-                return books;
+                filtered = books;
         }
-    }, [books, filter, user?.id]);
 
-    // Calculate user stats
-    const userStats = useMemo(() => {
-        const userBooks = books?.filter(book => book.userId === user?.id) || [];
-        return {
-            booksShared: userBooks.length,
-            totalUpvotes: userBooks.reduce((sum: number, book: Book) => sum + (book.upvotes || 0), 0),
-            totalComments: userBooks.reduce((sum: number, book: Book) => sum + (book.comments?.length || 0), 0)
+        const stats = {
+            totalBooks: books.length,
+            totalVotes: books.reduce((sum, book) => sum + (book.upvotes || 0), 0),
+            totalComments: books.reduce((sum, book) => sum + (book.comments?.length || 0), 0),
+            booksThisWeek: recentBooks.length
         };
-    }, [books, user?.id]);
+
+        return { stats, filteredBooks: filtered };
+    }, [books, viewFilter]);
+
+    const handleVote = async (bookId: number, type: 'up' | 'down') => {
+        console.log(`Voting ${type} for book ${bookId}`);
+        mutate();
+    };
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center min-h-screen bg-gray-50">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-            </div>
+            <GoogleBooksLayout>
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                    {Array.from({ length: 8 }).map((_, i) => (
+                        <div key={i} className="space-y-3">
+                            <div className="aspect-[3/4] bg-gray-200 rounded-lg animate-pulse" />
+                            <div className="h-4 bg-gray-200 rounded animate-pulse" />
+                            <div className="h-3 bg-gray-200 rounded animate-pulse w-3/4" />
+                        </div>
+                    ))}
+                </div>
+            </GoogleBooksLayout>
         );
     }
 
-    if (!isAuthenticated) {
-        return null;
-    }
-
     return (
-        <div className="min-h-screen bg-gray-50">
-            <div className="container py-6 space-y-6">
-                {/* Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900">
-                            Welcome back, {user?.name?.split(' ')[0]}
-                        </h1>
-                        <p className="text-gray-600 text-sm">
-                            Manage your books and discover new ones
-                        </p>
+        <GoogleBooksLayout>
+            {/* Header */}
+            <div className="mb-8">
+                <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                        <User className="h-8 w-8 text-google-blue" />
+                        <div>
+                            <h1 className="text-3xl font-normal text-gray-900">Dashboard</h1>
+                            <p className="text-gray-600">
+                                Welcome back, Reader! Manage your books and discover new favorites.
+                            </p>
+                        </div>
                     </div>
-                    <AddBookDialog onBookAdded={() => mutate()}>
-                        <Button className="gap-2 shadow-sm">
-                            <Plus className="h-4 w-4" />
-                            Add Book
-                        </Button>
-                    </AddBookDialog>
-                </div>
-
-                {/* Stats */}
-                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                    <Card className="border-0 shadow-sm">
-                        <CardContent className="p-4">
-                            <div className="flex items-center gap-3">
-                                <div className="bg-blue-100 p-2 rounded-lg">
-                                    <BookOpen className="h-5 w-5 text-blue-600" />
-                                </div>
-                                <div>
-                                    <p className="text-sm text-gray-600">My Books</p>
-                                    <p className="text-xl font-bold text-gray-900">{userStats.booksShared}</p>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="border-0 shadow-sm">
-                        <CardContent className="p-4">
-                            <div className="flex items-center gap-3">
-                                <div className="bg-green-100 p-2 rounded-lg">
-                                    <TrendingUp className="h-5 w-5 text-green-600" />
-                                </div>
-                                <div>
-                                    <p className="text-sm text-gray-600">Upvotes</p>
-                                    <p className="text-xl font-bold text-gray-900">{userStats.totalUpvotes}</p>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="border-0 shadow-sm">
-                        <CardContent className="p-4">
-                            <div className="flex items-center gap-3">
-                                <div className="bg-purple-100 p-2 rounded-lg">
-                                    <MessageCircle className="h-5 w-5 text-purple-600" />
-                                </div>
-                                <div>
-                                    <p className="text-sm text-gray-600">Comments</p>
-                                    <p className="text-xl font-bold text-gray-900">{userStats.totalComments}</p>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
-
-                {/* Quick Links */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <Link href="/genres">
-                        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
-                            <CardContent className="p-4 text-center">
-                                <Filter className="h-6 w-6 mx-auto mb-2 text-gray-600" />
-                                <p className="text-sm font-medium text-gray-900">Browse Genres</p>
-                            </CardContent>
-                        </Card>
-                    </Link>
-
-                    <Link href="/trending">
-                        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
-                            <CardContent className="p-4 text-center">
-                                <TrendingUp className="h-6 w-6 mx-auto mb-2 text-gray-600" />
-                                <p className="text-sm font-medium text-gray-900">Trending</p>
-                            </CardContent>
-                        </Card>
-                    </Link>
 
                     <Link href="/create">
-                        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
-                            <CardContent className="p-4 text-center">
-                                <Plus className="h-6 w-6 mx-auto mb-2 text-gray-600" />
-                                <p className="text-sm font-medium text-gray-900">Add Book</p>
-                            </CardContent>
-                        </Card>
-                    </Link>
-
-                    <Link href="/">
-                        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
-                            <CardContent className="p-4 text-center">
-                                <BookOpen className="h-6 w-6 mx-auto mb-2 text-gray-600" />
-                                <p className="text-sm font-medium text-gray-900">Discover</p>
-                            </CardContent>
-                        </Card>
+                        <Button className="bg-google-blue hover:bg-google-blue-dark text-white gap-2">
+                            <PlusCircle className="h-4 w-4" />
+                            Add Book
+                        </Button>
                     </Link>
                 </div>
 
-                {/* Books Section */}
-                <div className="space-y-4">
-                    {/* Filter and View Controls */}
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                        <div className="flex items-center gap-2">
+                {/* Community Stats */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <Card className="border border-gray-200">
+                        <CardContent className="p-4 text-center">
+                            <BookOpen className="h-6 w-6 text-green-500 mx-auto mb-2" />
+                            <div className="text-2xl font-medium text-gray-900">
+                                {stats.totalBooks}
+                            </div>
+                            <div className="text-sm text-gray-600">Total Books</div>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="border border-gray-200">
+                        <CardContent className="p-4 text-center">
+                            <Heart className="h-6 w-6 text-red-500 mx-auto mb-2" />
+                            <div className="text-2xl font-medium text-gray-900">
+                                {stats.totalVotes}
+                            </div>
+                            <div className="text-sm text-gray-600">Community Votes</div>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="border border-gray-200">
+                        <CardContent className="p-4 text-center">
+                            <MessageCircle className="h-6 w-6 text-blue-500 mx-auto mb-2" />
+                            <div className="text-2xl font-medium text-gray-900">
+                                {stats.totalComments}
+                            </div>
+                            <div className="text-sm text-gray-600">Discussions</div>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="border border-gray-200">
+                        <CardContent className="p-4 text-center">
+                            <Calendar className="h-6 w-6 text-purple-500 mx-auto mb-2" />
+                            <div className="text-2xl font-medium text-gray-900">
+                                {stats.booksThisWeek}
+                            </div>
+                            <div className="text-sm text-gray-600">This Week</div>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Quick Actions & Filters */}
+                <div className="mb-6">
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-medium text-gray-900">Community Library</h3>
+                        <div className="flex gap-2">
                             <Button
-                                variant={filter === 'all' ? 'default' : 'outline'}
+                                onClick={() => setViewFilter('all')}
+                                variant={viewFilter === 'all' ? "default" : "outline"}
                                 size="sm"
-                                onClick={() => setFilter('all')}
+                                className={viewFilter === 'all' ? "bg-google-blue text-white" : ""}
                             >
                                 All Books
+                                <Badge variant="secondary" className="ml-2 bg-gray-100 text-gray-600">
+                                    {books?.length || 0}
+                                </Badge>
                             </Button>
+
                             <Button
-                                variant={filter === 'mine' ? 'default' : 'outline'}
+                                onClick={() => setViewFilter('recent')}
+                                variant={viewFilter === 'recent' ? "default" : "outline"}
                                 size="sm"
-                                onClick={() => setFilter('mine')}
-                            >
-                                My Books
-                            </Button>
-                            <Button
-                                variant={filter === 'recent' ? 'default' : 'outline'}
-                                size="sm"
-                                onClick={() => setFilter('recent')}
+                                className={viewFilter === 'recent' ? "bg-google-blue text-white" : ""}
                             >
                                 Recent
-                            </Button>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                            <Button
-                                variant={viewMode === 'grid' ? 'default' : 'outline'}
-                                size="sm"
-                                onClick={() => setViewMode('grid')}
-                            >
-                                <Grid3X3 className="h-4 w-4" />
-                            </Button>
-                            <Button
-                                variant={viewMode === 'list' ? 'default' : 'outline'}
-                                size="sm"
-                                onClick={() => setViewMode('list')}
-                            >
-                                <List className="h-4 w-4" />
+                                <Badge variant="secondary" className="ml-2 bg-gray-100 text-gray-600">
+                                    {stats.booksThisWeek}
+                                </Badge>
                             </Button>
                         </div>
                     </div>
-
-                    {/* Books Grid/List */}
-                    {booksLoading ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                            {Array(8).fill(0).map((_, i) => (
-                                <div key={i} className="h-96 bg-gray-200 rounded-lg animate-pulse"></div>
-                            ))}
-                        </div>
-                    ) : filteredBooks.length > 0 ? (
-                        <div className={viewMode === 'grid'
-                            ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-                            : "space-y-4"
-                        }>
-                            {filteredBooks.map((book) => (
-                                <BookCard
-                                    key={book.id}
-                                    book={book}
-                                    onComment={(bookId) => router.push(`/books/${bookId}#comments`)}
-                                    onVoteSuccess={() => mutate()}
-                                />
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="text-center py-16">
-                            <div className="bg-gray-100 rounded-full p-6 w-20 h-20 mx-auto mb-4">
-                                <BookOpen className="h-8 w-8 text-gray-400 mx-auto" />
-                            </div>
-                            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                                {filter === 'mine' ? 'No books yet' : 'No books found'}
-                            </h3>
-                            <p className="text-gray-600 mb-4">
-                                {filter === 'mine'
-                                    ? 'Share your first book with the community!'
-                                    : 'Try adjusting your filters or check back later.'
-                                }
-                            </p>
-                            {filter === 'mine' && (
-                                <AddBookDialog onBookAdded={() => mutate()}>
-                                    <Button>
-                                        <Plus className="h-4 w-4 mr-2" />
-                                        Add Your First Book
-                                    </Button>
-                                </AddBookDialog>
-                            )}
-                        </div>
-                    )}
                 </div>
             </div>
-        </div>
+
+            {/* Books Grid */}
+            <GoogleBooksGrid
+                books={filteredBooks}
+                onVote={handleVote}
+                showViewToggle={true}
+                sortOptions={[
+                    { value: 'recent', label: 'Recently Added' },
+                    { value: 'popular', label: 'Most Popular' },
+                    { value: 'discussed', label: 'Most Discussed' },
+                    { value: 'title', label: 'Title A-Z' }
+                ]}
+                emptyMessage={
+                    viewFilter === 'recent' ? "No recent books found" : "No books available"
+                }
+                emptyDescription={
+                    viewFilter === 'recent' ? "Check back later for new additions." : "Be the first to share a book with the community."
+                }
+            />
+
+            {/* Call to Action */}
+            {filteredBooks.length === 0 && (
+                <div className="text-center py-12">
+                    <div className="max-w-md mx-auto">
+                        <BookOpen className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                        <h3 className="text-xl font-normal text-gray-900 mb-2">Start Building the Library</h3>
+                        <p className="text-gray-600 mb-6">
+                            Share books you love with the community and discover new favorites from other readers.
+                        </p>
+                        <Link href="/create">
+                            <Button className="bg-google-blue hover:bg-google-blue-dark text-white gap-2">
+                                <PlusCircle className="h-4 w-4" />
+                                Add the First Book
+                            </Button>
+                        </Link>
+                    </div>
+                </div>
+            )}
+        </GoogleBooksLayout>
     );
 }

@@ -2,14 +2,16 @@
 
 import { useAuth } from "@/hooks/useAuth";
 import { useBooks } from "@/hooks/useBooks";
+import { GoogleBooksLayout } from "@/components/features/GoogleBooksLayout";
+import { GoogleBookCard } from "@/components/features/GoogleBookCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { BookCard } from "@/components/features/BookCard";
 import { User, BookOpen, ThumbsUp, MessageCircle, Calendar, Settings } from "lucide-react";
 import { useMemo } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function ProfilePage() {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
@@ -34,57 +36,63 @@ export default function ProfilePage() {
 
   if (authLoading || booksLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
+      <GoogleBooksLayout>
+        <div className="flex items-center justify-center py-16">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-google-blue"></div>
+        </div>
+      </GoogleBooksLayout>
     );
   }
 
   if (!isAuthenticated) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Card className="w-full max-w-md">
-          <CardContent className="p-6 text-center">
-            <User className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-            <h2 className="text-xl font-semibold mb-2">Sign In Required</h2>
-            <p className="text-muted-foreground mb-4">
-              Please sign in to view your profile
-            </p>
-            <Button onClick={() => router.push('/auth/signin')}>
-              Sign In
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
+      <GoogleBooksLayout>
+        <div className="flex items-center justify-center py-16">
+          <Card className="w-full max-w-md border border-gray-200">
+            <CardContent className="p-6 text-center">
+              <User className="h-16 w-16 mx-auto mb-4 text-gray-300" />
+              <h2 className="text-xl font-normal mb-2 text-gray-900">Sign In Required</h2>
+              <p className="text-gray-600 mb-4">
+                Please sign in to view your profile
+              </p>
+              <Button 
+                onClick={() => router.push('/auth/signin')}
+                className="bg-google-blue hover:bg-google-blue-dark text-white"
+              >
+                Sign In
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </GoogleBooksLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
-      <div className="container py-12">
-        {/* Profile Header */}
-        <Card className="mb-8">
-          <CardContent className="p-8">
-            <div className="flex items-start gap-6">
-              <Avatar className="h-24 w-24">
-                <AvatarFallback className="text-2xl font-bold">
-                  {user?.name?.slice(0, 2).toUpperCase() || 'U'}
-                </AvatarFallback>
-              </Avatar>
+    <GoogleBooksLayout>
+      {/* Profile Header */}
+      <Card className="mb-8 border border-gray-200">
+        <CardContent className="p-8">
+          <div className="flex items-start gap-6">
+            <Avatar className="h-24 w-24">
+              <AvatarFallback className="text-2xl font-normal bg-google-blue text-white">
+                {user?.name?.slice(0, 2).toUpperCase() || 'U'}
+              </AvatarFallback>
+            </Avatar>
+            
+            <div className="flex-1">
+              <div className="flex items-center gap-4 mb-4">
+                <h1 className="text-3xl font-normal text-gray-900">{user?.name || 'Anonymous User'}</h1>
+                <Button variant="outline" size="sm" className="border-gray-300">
+                  <Settings className="h-4 w-4 mr-2" />
+                  Edit Profile
+                </Button>
+              </div>
               
-              <div className="flex-1">
-                <div className="flex items-center gap-4 mb-4">
-                  <h1 className="text-3xl font-bold">{user?.name || 'Anonymous User'}</h1>
-                  <Button variant="outline" size="sm">
-                    <Settings className="h-4 w-4 mr-2" />
-                    Edit Profile
-                  </Button>
-                </div>
-                
-                <div className="flex items-center gap-2 text-muted-foreground mb-4">
-                  <Calendar className="h-4 w-4" />
-                  <span>Joined {new Date().toLocaleDateString()}</span>
-                </div>
+              <div className="flex items-center gap-2 text-gray-600 mb-4">
+                <Calendar className="h-4 w-4" />
+                <span>Joined {new Date().toLocaleDateString()}</span>
+              </div>
 
                 <p className="text-muted-foreground mb-6">
                   Book enthusiast sharing knowledge and discoveries with the BookNest community.
@@ -113,23 +121,26 @@ export default function ProfilePage() {
         {/* User's Books */}
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold">My Books</h2>
-            <Button onClick={() => router.push('/create')}>
+            <h2 className="text-2xl font-normal text-gray-900">My Books</h2>
+            <Button 
+              onClick={() => router.push('/create')}
+              className="bg-google-blue hover:bg-google-blue-dark text-white"
+            >
               <BookOpen className="h-4 w-4 mr-2" />
               Share New Book
             </Button>
           </div>
 
           {userBooks.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
               {userBooks.map((book) => (
-                <BookCard key={book.id} book={book} />
+                <GoogleBookCard key={book.id} book={book} />
               ))}
             </div>
           ) : (
-            <Card>
+            <Card className="border border-gray-200">
               <CardContent className="p-12 text-center">
-                <BookOpen className="h-16 w-16 mx-auto mb-4 text-muted-foreground/50" />
+                <BookOpen className="h-16 w-16 mx-auto mb-4 text-gray-300" />
                 <h3 className="text-xl font-semibold mb-2">No Books Shared Yet</h3>
                 <p className="text-muted-foreground mb-6">
                   Start building your library by sharing your first book with the community.
@@ -175,14 +186,13 @@ export default function ProfilePage() {
               ))}
               
               {userBooks.length === 0 && (
-                <div className="text-center py-8 text-muted-foreground">
+                <div className="text-center py-8 text-gray-600">
                   No recent activity
                 </div>
               )}
             </div>
           </CardContent>
         </Card>
-      </div>
-    </div>
-  );
-}
+      </GoogleBooksLayout>
+    );
+  }
