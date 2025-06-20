@@ -17,7 +17,8 @@
 		"db:status": "wrangler d1 migrations list booknest-db",
 		"db:create": "wrangler d1 create booknest-db",
 		"db:seed": "tsx scripts/seed.ts",
-		"db:seed:local": "tsx scripts/seed-local.ts"
+		"db:seed:local": "tsx scripts/seed-local.ts",
+		"db:seed:comprehensive": "tsx scripts/seed-final.ts"
 	},
 	"dependencies": {
 		"@auth/core": "^0.39.1",
@@ -78,6 +79,7 @@
 	},
 	"devDependencies": {
 		"@eslint/eslintrc": "^3",
+		"@faker-js/faker": "^9.8.0",
 		"@tailwindcss/postcss": "^4",
 		"@types/node": "^20",
 		"@types/react": "^19",

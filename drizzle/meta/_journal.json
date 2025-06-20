@@ -1,27 +1,34 @@
 {
-    "version": "7",
-    "dialect": "sqlite",
-    "entries": [
-        {
-            "idx": 0,
-            "version": "7",
-            "when": 1734715200000,
-            "tag": "0000_new_veda",
-            "breakpoints": true
-        },
-        {
-            "idx": 1,
-            "version": "7",
-            "when": 1734715260000,
-            "tag": "0001_late_magneto",
-            "breakpoints": true
-        },
-        {
-            "idx": 2,
-            "version": "6",
-            "when": 1750381286782,
-            "tag": "0002_sticky_puma",
-            "breakpoints": true
-        }
-    ]
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1734715200000,
+      "tag": "0000_new_veda",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1734715260000,
+      "tag": "0001_late_magneto",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1750381286782,
+      "tag": "0002_sticky_puma",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1750417522118,
+      "tag": "0003_loud_dust",
+      "breakpoints": true
+    }
+  ]
 }

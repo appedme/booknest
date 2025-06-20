@@ -37,134 +37,134 @@ export function GoogleBookCard({ book, onVote, compact = false }: GoogleBookCard
 
   const formatGenre = (genre: string) => {
     return genre?.replace(/_/g, ' ') || "Uncategorized";
-  };  return (    <div className="google-book-card group relative">      {/* Book Cover */}      <div className="relative mb-3 overflow-hidden rounded-lg">        <Link href={`/books/${book.id}`} className="block">          {!imageError && book.posterUrl ? (            <div className="relative bg-gray-100 rounded-lg overflow-hidden" style={{ aspectRatio: '3/4' }}>              <Image                src={book.posterUrl}                alt={book.name}                fill                className={`object-cover transition-all duration-300 group-hover:scale-105 ${                  isLoading ? 'opacity-0' : 'opacity-100'                }`}                onLoad={() => setIsLoading(false)}                onError={() => {                  setImageError(true);                  setIsLoading(false);                }}                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"              />              {isLoading && (                <div className="absolute inset-0 bg-gray-200 animate-pulse rounded-lg" />              )}            </div>          ) : (
-            <div 
-              className="bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center text-blue-600"
-              style={{ aspectRatio: '3/4' }}
-            >
-              <div className="text-center p-4">
-                <div className="w-12 h-12 bg-blue-300 rounded-full flex items-center justify-center mx-auto mb-2">
-                  <span className="text-xl font-bold text-white">
-                    {book.name.charAt(0).toUpperCase()}
-                  </span>
-                </div>
-                <p className="text-xs font-medium text-blue-700 line-clamp-2">
-                  {book.name}
-                </p>
-              </div>
-            </div>
-          )}
-        </Link>
-
-        {/* Hover Actions */}
-        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant="secondary" 
-                size="sm" 
-                className="h-8 w-8 p-0 bg-white/90 backdrop-blur-sm hover:bg-white"
-              >
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>
-                <Bookmark className="h-4 w-4 mr-2" />
-                Save for later
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Share className="h-4 w-4 mr-2" />
-                Share book
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href={book.url} target="_blank" rel="noopener noreferrer">
-                  Visit source
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+  }; return (<div className="google-book-card group relative">      {/* Book Cover */}      <div className="relative mb-3 overflow-hidden rounded-lg">        <Link href={`/books/${book.id}`} className="block">          {!imageError && book.posterUrl ? (<div className="relative bg-gray-100 rounded-lg overflow-hidden" style={{ aspectRatio: '3/4' }}>              <Image src={book.posterUrl} alt={book.name} fill className={`object-cover transition-all duration-300 group-hover:scale-105 ${isLoading ? 'opacity-0' : 'opacity-100'}`} onLoad={() => setIsLoading(false)} onError={() => { setImageError(true); setIsLoading(false); }} sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw" />              {isLoading && (<div className="absolute inset-0 bg-gray-200 animate-pulse rounded-lg" />)}            </div>) : (
+    <div
+      className="bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center text-blue-600"
+      style={{ aspectRatio: '3/4' }}
+    >
+      <div className="text-center p-4">
+        <div className="w-12 h-12 bg-blue-300 rounded-full flex items-center justify-center mx-auto mb-2">
+          <span className="text-xl font-bold text-white">
+            {book.name.charAt(0).toUpperCase()}
+          </span>
         </div>
-      </div>
-
-      {/* Book Info */}
-      <div className="space-y-2">
-        {/* Title */}
-        <Link href={`/books/${book.id}`} className="block">
-          <h3 
-            className="font-normal text-sm leading-tight line-clamp-2 hover:underline transition-colors"
-            style={{ color: 'var(--google-text-primary)' }}
-            title={book.name}
-          >
-            {book.name}
-          </h3>
-        </Link>
-
-        {/* Author */}
-        <p 
-          className="text-xs leading-tight line-clamp-1"
-          style={{ color: 'var(--google-text-secondary)' }}
-          title={formatAuthor(book.authorName)}
-        >
-          {formatAuthor(book.authorName)}
+        <p className="text-xs font-medium text-blue-700 line-clamp-2">
+          {book.name}
         </p>
+      </div>
+    </div>
+  )}
+  </Link>
 
-        {/* Genre Badge */}
-        <div className="flex items-center justify-between">
-          <Badge 
-            variant="secondary" 
-            className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+    {/* Hover Actions */}
+    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="secondary"
+            size="sm"
+            className="h-8 w-8 p-0 bg-white/90 backdrop-blur-sm hover:bg-white"
           >
-            {formatGenre(book.genre)}
-          </Badge>
-          
-          {/* Quick Rating */}
-          {(book.upvotes > 0 || book.downvotes > 0) && (
-            <div className="flex items-center space-x-1 text-xs" style={{ color: 'var(--google-text-secondary)' }}>
-              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-              <span>
-                {book.upvotes > 0 ? ((book.upvotes / (book.upvotes + book.downvotes)) * 5).toFixed(1) : '—'}
-              </span>
-            </div>
-          )}
-        </div>
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="bg-alpha-50 backdrop-blur-sm border border-gray-200 shadow-lg rounded-lg p-2">
+          <DropdownMenuItem>
+            <Bookmark className="h-4 w-4 mr-2" />
+            Save for later
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Share className="h-4 w-4 mr-2" />
+            Share book
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <Link href={book.url} target="_blank" rel="noopener noreferrer">
+              Visit source
+            </Link>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  </div>
 
-        {/* Engagement Actions */}
-        {!compact && (
-          <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-            <div className="flex items-center space-x-3">
-              <button
-                onClick={() => handleVote('up')}
-                className="flex items-center space-x-1 text-xs text-gray-600 hover:text-blue-600 transition-colors"
-              >
-                <ThumbsUp className="h-3.5 w-3.5" />
-                <span>{book.upvotes || 0}</span>
-              </button>
-              
-              <button
-                onClick={() => handleVote('down')}
-                className="flex items-center space-x-1 text-xs text-gray-600 hover:text-red-600 transition-colors"
-              >
-                <ThumbsDown className="h-3.5 w-3.5" />
-                <span>{book.downvotes || 0}</span>
-              </button>
-              
-              <div className="flex items-center space-x-1 text-xs text-gray-600">
-                <MessageCircle className="h-3.5 w-3.5" />
-                <span>{book.comments?.length || 0}</span>
-              </div>
-            </div>
-            
-            <div className="text-xs" style={{ color: 'var(--google-text-secondary)' }}>
-              {new Date(book.createdAt).toLocaleDateString('en-US', { 
-                month: 'short', 
-                year: 'numeric' 
-              })}
-            </div>
+    {/* Book Info */}
+    <div className="space-y-2">
+      {/* Title */}
+      <Link href={`/books/${book.id}`} className="block">
+        <h3
+          className="font-normal text-sm leading-tight line-clamp-2 hover:underline transition-colors"
+          style={{ color: 'var(--google-text-primary)' }}
+          title={book.name}
+        >
+          {book.name}
+        </h3>
+      </Link>
+
+      {/* Author */}
+      <p
+        className="text-xs leading-tight line-clamp-1"
+        style={{ color: 'var(--google-text-secondary)' }}
+        title={formatAuthor(book.authorName)}
+      >
+        {formatAuthor(book.authorName)}
+      </p>
+
+      {/* Genre Badge */}
+      <div className="flex items-center justify-between">
+        <Badge
+          variant="secondary"
+          className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+        >
+          {formatGenre(book.genre)}
+        </Badge>
+
+        {/* Quick Rating */}
+        {(book.upvotes > 0 || book.downvotes > 0) && (
+          <div className="flex items-center space-x-1 text-xs" style={{ color: 'var(--google-text-secondary)' }}>
+            <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+            <span>
+              {book.upvotes > 0 ? ((book.upvotes / (book.upvotes + book.downvotes)) * 5).toFixed(1) : '—'}
+            </span>
           </div>
         )}
       </div>
+
+      {/* Engagement Actions */}
+      {!compact && (
+        <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={() => handleVote('up')}
+              className="flex items-center space-x-1 text-xs text-gray-600 hover:text-blue-600 transition-colors"
+            >
+              <ThumbsUp className="h-3.5 w-3.5" />
+              <span>{book.upvotes || 0}</span>
+            </button>
+
+            <button
+              onClick={() => handleVote('down')}
+              className="flex items-center space-x-1 text-xs text-gray-600 hover:text-red-600 transition-colors"
+            >
+              <ThumbsDown className="h-3.5 w-3.5" />
+              <span>{book.downvotes || 0}</span>
+            </button>
+
+            <div className="flex items-center space-x-1 text-xs text-gray-600">
+              <MessageCircle className="h-3.5 w-3.5" />
+              <span>{book.comments?.length || 0}</span>
+            </div>
+          </div>
+
+          <div className="text-xs" style={{ color: 'var(--google-text-secondary)' }}>
+            {new Date(book.createdAt).toLocaleDateString('en-US', {
+              month: 'short',
+              year: 'numeric'
+            })}
+          </div>
+        </div>
+      )}
     </div>
+  </div>
   );
 }
