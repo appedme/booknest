@@ -14,7 +14,11 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "20");
     const offset = parseInt(searchParams.get("offset") || "0");
 
-    const db = getDB();
+    const db = await getDB();
+    
+    if (!db) {
+      return NextResponse.json({ error: "Database not available" }, { status: 500 });
+    }
 
     // Build conditions array
     const conditions = [];
@@ -117,7 +121,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const db = getDB();
+    const db = await getDB();
+    
+    if (!db) {
+      return NextResponse.json({ error: "Database not available" }, { status: 500 });
+    }
+    
     const newBook = await db.insert(books).values({
       name,
       url,

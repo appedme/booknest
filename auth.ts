@@ -1,10 +1,14 @@
 import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
 import { DrizzleAdapter } from "@auth/drizzle-adapter"
-import { getDB } from "@/lib/db"
+import { getDBSync } from "@/lib/db"
+
+// Get database instance for auth adapter
+const authDB = getDBSync();
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  adapter: DrizzleAdapter(getDB()),
+  // Only use DrizzleAdapter if database is available, otherwise fallback to JWT
+  ...(authDB ? { adapter: DrizzleAdapter(authDB) } : {}),
   providers: [
     Google({
       clientId: process.env.AUTH_GOOGLE_ID || process.env.GOOGLE_CLIENT_ID!,

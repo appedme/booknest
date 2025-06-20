@@ -33,7 +33,11 @@ export async function POST(request: NextRequest) {
     }
 
     const user = session?.user as User;
-    const db = getDB();
+    const db = await getDB();
+    
+    if (!db) {
+      return NextResponse.json({ error: "Database not available" }, { status: 500 });
+    }
 
     let existingVote;
 
@@ -108,7 +112,11 @@ export async function GET(request: NextRequest) {
     }
 
     const user = session?.user as User;
-    const db = getDB();
+    const db = await getDB();
+    
+    if (!db) {
+      return NextResponse.json({ error: "Database not available" }, { status: 500 });
+    }
 
     let existingVote;
 

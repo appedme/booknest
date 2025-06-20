@@ -16,7 +16,11 @@ export async function GET(
       return NextResponse.json({ error: "Invalid book ID" }, { status: 400 });
     }
 
-    const db = getDB();
+    const db = await getDB();
+    
+    if (!db) {
+      return NextResponse.json({ error: "Database not available" }, { status: 500 });
+    }
 
     // Get book details
     const bookResult = await db.select()
@@ -71,7 +75,11 @@ export async function DELETE(
       return NextResponse.json({ error: "Invalid book ID" }, { status: 400 });
     }
 
-    const db = getDB();
+    const db = await getDB();
+    
+    if (!db) {
+      return NextResponse.json({ error: "Database not available" }, { status: 500 });
+    }
 
     // Delete associated votes and comments first
     await db.delete(votes).where(eq(votes.bookId, bookId));

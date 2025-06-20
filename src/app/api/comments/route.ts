@@ -18,7 +18,11 @@ export async function GET(request: NextRequest) {
 
     const session = await auth();
     const user = session?.user as User;
-    const db = getDB();
+    const db = await getDB();
+    
+    if (!db) {
+      return NextResponse.json({ error: "Database not available" }, { status: 500 });
+    }
 
     // Get all comments for the book (both parent comments and replies)
     const allComments = await db.select()
@@ -106,7 +110,12 @@ export async function POST(request: NextRequest) {
     }
 
     const user = session?.user as User;
-    const db = getDB();
+    const db = await getDB();
+    
+    if (!db) {
+      return NextResponse.json({ error: "Database not available" }, { status: 500 });
+    }
+    
     const newComment = await db.insert(comments).values({
       bookId,
       userId: user?.id || null,
