@@ -17,7 +17,6 @@ import {
     ArrowLeft,
     ExternalLink,
     MessageCircle,
-    User,
     Calendar,
     ThumbsUp,
     ThumbsDown,
@@ -25,24 +24,20 @@ import {
     Loader2,
     Share2,
     BookOpen,
-    Eye,
-    Heart,
     Star,
-    Clock,
     TrendingUp,
     Users,
     Award,
     Bookmark,
-    MoreHorizontal,
     Copy,
     Twitter,
     Facebook,
-    Link as LinkIcon,
     Zap
 } from "lucide-react";
 import Link from "next/link";
 import { Comment as CommentType } from "@/types";
 import { Comment } from "@/components/features/Comment";
+import { RatingAndFeedback } from "@/components/features/RatingAndFeedback";
 import useSWR, { mutate } from "swr";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -418,6 +413,22 @@ export default function BookPage() {
                                                                 day: 'numeric'
                                                             })}
                                                         </div>
+                                                        {/* Star Rating Preview */}
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="flex items-center">
+                                                                {[1, 2, 3, 4, 5].map((star) => (
+                                                                    <Star
+                                                                        key={star}
+                                                                        className={`h-4 w-4 ${
+                                                                            star <= 4.2 // Mock average rating
+                                                                                ? "text-yellow-400 fill-yellow-400"
+                                                                                : "text-gray-300"
+                                                                        }`}
+                                                                    />
+                                                                ))}
+                                                            </div>
+                                                            <span className="text-sm text-muted-foreground">4.2 (12 reviews)</span>
+                                                        </div>
                                                     </motion.div>
 
                                                     {/* Rating Display */}
@@ -605,6 +616,21 @@ export default function BookPage() {
                                         </div>
                                     </CardContent>
                                 </Card>
+                            </motion.div>
+
+                            {/* Rating and Feedback Section */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 30 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.6, delay: 0.8 }}
+                            >
+                                <RatingAndFeedback 
+                                    book={book} 
+                                    onRatingSubmit={() => {
+                                        // Could trigger a refresh or update
+                                        console.log('Rating submitted');
+                                    }}
+                                />
                             </motion.div>
                         </div>
 

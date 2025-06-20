@@ -1,7 +1,7 @@
 "use client";
 
 import useSWR from 'swr';
-import type { Book, PaginatedResponse } from '@/types';
+import type { Book } from '@/types';
 
 // Fetcher function for SWR
 const fetcher = async (url: string) => {
@@ -33,7 +33,7 @@ export function useBooks(filters?: {
 
   return {
     books: (data as { books: Book[] })?.books || [],
-    pagination: (data as { pagination: any })?.pagination,
+    pagination: (data as { pagination: { page: number; limit: number; total: number; totalPages: number } })?.pagination,
     isLoading,
     isError: error,
     mutate, // For manual revalidation

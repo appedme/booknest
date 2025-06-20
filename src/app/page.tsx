@@ -5,7 +5,6 @@ import { BookCard } from '@/components/features/BookCard';
 import { TrendingBooks } from '@/components/features/TrendingBooks';
 import { LatestBooks } from '@/components/features/LatestBooks';
 import { CommunityHighlights } from '@/components/features/CommunityHighlights';
-import { ActiveDiscussions } from '@/components/features/ActiveDiscussions';
 import { AddBookDialog } from '@/components/features/AddBookDialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,16 +16,12 @@ import {
   TrendingUp,
   Clock,
   BookOpen,
-  Users,
   Star,
   ArrowRight,
-  Sparkles,
-  Zap,
   Heart,
   MessageCircle,
   Grid3X3,
-  List,
-  ChevronDown
+  List
 } from 'lucide-react';
 import { useBooks } from '@/hooks/useBooks';
 import { useRouter } from 'next/navigation';
@@ -41,7 +36,6 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<SortOption>('all');
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
-  const [showFilters, setShowFilters] = useState(false);
   const router = useRouter();
 
   // Filter and sort books
@@ -75,21 +69,6 @@ export default function Home() {
         return filtered;
     }
   }, [books, searchQuery, sortBy]);
-
-  // Get stats
-  const stats = useMemo(() => {
-    if (!books) return { total: 0, thisWeek: 0, genres: 0, totalVotes: 0 };
-
-    const oneWeekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
-    const uniqueGenres = new Set(books.map(book => book.genre).filter(Boolean));
-
-    return {
-      total: books.length,
-      thisWeek: books.filter(book => new Date(book.createdAt).getTime() > oneWeekAgo).length,
-      genres: uniqueGenres.size,
-      totalVotes: books.reduce((sum, book) => sum + (book.upvotes || 0) + (book.downvotes || 0), 0)
-    };
-  }, [books]);
 
   const handleBookAdded = useCallback(() => {
     mutate();

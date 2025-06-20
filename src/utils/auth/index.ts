@@ -16,10 +16,12 @@ export function requireAuth(isAuthenticated: boolean, redirectFn: () => void) {
 /**
  * Handles authentication error messages
  */
-export function getAuthErrorMessage(error: any): string {
+export function getAuthErrorMessage(error: unknown): string {
   if (typeof error === 'string') return error;
-  if (error?.message) return error.message;
-  return 'Authentication failed';
+  if (error && typeof error === 'object' && 'message' in error) {
+    return (error as { message?: string }).message || 'An unknown error occurred.';
+  }
+  return 'An unknown error occurred.';
 }
 
 /**

@@ -1,7 +1,6 @@
 "use client";
 
 import useSWR, { mutate } from 'swr';
-import { useAuth } from './useAuth';
 
 // Fetcher function for SWR
 const fetcher = async (url: string) => {
@@ -13,8 +12,6 @@ const fetcher = async (url: string) => {
 };
 
 export function useVoting(bookId: number) {
-  const { isAuthenticated } = useAuth();
-
   // SWR hook for vote status
   const { data: voteData, error, isLoading } = useSWR(
     bookId ? `/api/votes?bookId=${bookId}` : null,
@@ -35,7 +32,7 @@ export function useVoting(bookId: number) {
       });
 
       if (!response.ok) {
-        const errorData = await response.json() as any;
+        const errorData = await response.json() as { error?: string };
         throw new Error(errorData.error || 'Failed to vote');
       }
 
@@ -55,8 +52,8 @@ export function useVoting(bookId: number) {
   const downvote = () => vote('downvote');
 
   return {
-    hasVoted: (voteData as any)?.hasVoted || false,
-    voteType: (voteData as any)?.voteType || null,
+    hasVoted: (voteData as { hasVoted?: boolean })?.hasVoted || false,
+    voteType: (voteData as { voteType?: string })?.voteType || null,
     isLoading,
     error,
     upvote,

@@ -11,20 +11,12 @@ import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   Search,
-  Filter,
-  TrendingUp,
-  Clock,
   BookOpen,
-  Star,
   Grid3X3,
   List,
   SlidersHorizontal,
   X,
-  ArrowRight,
-  Calendar,
-  Users,
-  MessageCircle,
-  Heart
+  ArrowRight
 } from 'lucide-react';
 import { useBooks } from '@/hooks/useBooks';
 import { useRouter } from 'next/navigation';
@@ -39,7 +31,6 @@ export default function SearchPage() {
   const [selectedGenre, setSelectedGenre] = useState<string>("");
   const [sortBy, setSortBy] = useState<SortOption>('relevance');
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
-  const [showFilters, setShowFilters] = useState(false);
   const [minVotes, setMinVotes] = useState<string>("");
   const [minComments, setMinComments] = useState<string>("");
   const [dateRange, setDateRange] = useState<string>("");

@@ -17,7 +17,6 @@ import {
     ArrowLeft,
     ExternalLink,
     MessageCircle,
-    User,
     Calendar,
     ThumbsUp,
     ThumbsDown,
@@ -25,19 +24,15 @@ import {
     Loader2,
     Share2,
     BookOpen,
-    Eye,
-    Heart,
     Star,
-    Clock,
     TrendingUp,
     Users,
     Award,
     Bookmark,
-    MoreHorizontal,
     Copy,
     Twitter,
     Facebook,
-    Link as LinkIcon
+    Zap
 } from "lucide-react";
 import Link from "next/link";
 import { Comment as CommentType } from "@/types";
@@ -66,6 +61,7 @@ export default function BookPage() {
         bookId ? `/api/comments?bookId=${bookId}` : null,
         fetcher
     );
+
     const comments = (commentsData as { comments: CommentType[] })?.comments || [];
     const { upvote, downvote, hasVoted, voteType, isLoading: votingLoading } = useVoting(parseInt(bookId));
 
@@ -152,7 +148,6 @@ export default function BookPage() {
             });
 
             if (response.ok) {
-                const comment = await response.json() as Comment;
                 // Revalidate comments
                 await mutate(`/api/comments?bookId=${bookId}`);
                 setNewComment("");
@@ -500,12 +495,6 @@ export default function BookPage() {
                                     </CardContent>
                                 </Card>
                             </motion.div>
-                                                    <                                                </motion.div>
-                                            </div>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            </motion.div>
 
                             {/* Comments Section */}
                             <motion.div
@@ -558,7 +547,7 @@ export default function BookPage() {
                                                         </span>
                                                         <Button 
                                                             type="submit" 
-                                                            disabled={isSubmittingComment || !newComment.trim()}
+                                                            disabled={isSubmittingComment || !newComment.trim() || newComment.length > 500}
                                                             className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                                                         >
                                                             {isSubmittingComment ? (

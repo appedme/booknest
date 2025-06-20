@@ -105,5 +105,5 @@ export interface LoadingState {
 export interface ModalState {
   isOpen: boolean;
   type?: 'book-details' | 'add-book' | 'edit-book' | null;
-  data?: any;
+  data?: unknown;
 }

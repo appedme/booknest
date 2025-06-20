@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDB } from "@/lib/db";
 import { comments, commentLikes } from "@/lib/schema";
-import { eq, desc, isNull, and } from "drizzle-orm";
+import { eq, desc, and } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { generateIPHash } from "@/utils/crypto";
 import type { User } from "@/types";

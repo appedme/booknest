@@ -22,7 +22,7 @@ export function getDB() {
   try {
     const { env } = getCloudflareContext();
     return drizzle(env.DB, { schema });
-  } catch (error) {
+  } catch (cfError) {
     console.warn('Cloudflare context not available - falling back to development mode');
     // Fallback to local development
     try {
@@ -31,7 +31,7 @@ export function getDB() {
       });
       return drizzleLibsql(client, { schema });
     } catch (fallbackError) {
-      console.error("Both production and development database connections failed:", fallbackError);
+      console.error("Both production and development database connections failed:", cfError, fallbackError);
       throw new Error('Database connection failed. Please ensure you have a valid database connection configured.');
     }
   }
@@ -41,9 +41,9 @@ export function getDB() {
 export const db = (() => {
   try {
     return getDB();
-  } catch (error) {
+  } catch (dbError) {
     // Return null for build time when database is not available
-    console.warn('Database connection failed during initialization, auth will fall back to JWT:', error);
-    return null as any;
+    console.warn('Database connection failed during initialization, auth will fall back to JWT:', dbError);
+    return null;
   }
 })();

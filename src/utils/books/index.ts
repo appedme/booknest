@@ -13,8 +13,28 @@ export async function createBook(data: BookFormData) {
   });
 
   if (!response.ok) {
-    const error = await response.json() as any;
+    const error = await response.json() as { error?: string };
     throw new Error(error.error || 'Failed to create book');
+  }
+
+  return response.json();
+}
+
+/**
+ * Handles book update via API
+ */
+export async function updateBook(id: number, data: BookFormData) {
+  const response = await fetch(`/api/books/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const error = await response.json() as { error?: string };
+    throw new Error(error.error || 'Failed to update book');
   }
 
   return response.json();
@@ -62,7 +82,12 @@ function isValidURL(url: string): boolean {
 /**
  * Formats book data for display
  */
-export function formatBookForDisplay(book: any) {
+export function formatBookForDisplay(book: {
+  createdAt: string | Date;
+  updatedAt: string | Date;
+  summary?: string;
+  [key: string]: unknown;
+}) {
   return {
     ...book,
     createdAt: new Date(book.createdAt).toLocaleDateString(),

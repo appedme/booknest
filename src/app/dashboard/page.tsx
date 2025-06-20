@@ -11,7 +11,6 @@ import {
     Plus,
     TrendingUp,
     MessageCircle,
-    Eye,
     Filter,
     Grid3X3,
     List
@@ -53,12 +52,14 @@ export default function DashboardPage() {
     }, [books, filter, user?.id]);
 
     // Calculate user stats
-    const userBooks = books?.filter(book => book.userId === user?.id) || [];
-    const userStats = useMemo(() => ({
-        booksShared: userBooks.length,
-        totalUpvotes: userBooks.reduce((sum: number, book: Book) => sum + (book.upvotes || 0), 0),
-        totalComments: userBooks.reduce((sum: number, book: Book) => sum + (book.comments?.length || 0), 0)
-    }), [userBooks]);
+    const userStats = useMemo(() => {
+        const userBooks = books?.filter(book => book.userId === user?.id) || [];
+        return {
+            booksShared: userBooks.length,
+            totalUpvotes: userBooks.reduce((sum: number, book: Book) => sum + (book.upvotes || 0), 0),
+            totalComments: userBooks.reduce((sum: number, book: Book) => sum + (book.comments?.length || 0), 0)
+        };
+    }, [books, user?.id]);
 
     if (isLoading) {
         return (

@@ -3,8 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Heart, MessageCircle, ExternalLink, ThumbsUp, ThumbsDown, Loader2 } from "lucide-react";
+import { MessageCircle, ExternalLink, ThumbsUp, ThumbsDown, Loader2, Star } from "lucide-react";
 import { Book } from "@/types";
 import { formatDistanceToNow } from "date-fns";
 import { useVoting } from "@/hooks/useVoting";
@@ -18,7 +17,7 @@ interface BookCardProps {
 }
 
 export function BookCard({ book, onComment, onVoteSuccess }: BookCardProps) {
-  const { upvote, downvote, hasVoted, voteType, isLoading } = useVoting(book.id);
+  const { upvote, downvote, voteType, isLoading } = useVoting(book.id);
 
   const handleVote = async (e: React.MouseEvent, voteAction: 'upvote' | 'downvote') => {
     e.preventDefault();
@@ -96,6 +95,23 @@ export function BookCard({ book, onComment, onVoteSuccess }: BookCardProps) {
               {book.name}
             </h3>
           </Link>
+
+          {/* Star Rating */}
+          <div className="flex items-center gap-2">
+            <div className="flex items-center">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <Star
+                  key={star}
+                  className={`h-4 w-4 ${
+                    star <= 4.1 // Mock average rating
+                      ? "text-yellow-400 fill-yellow-400"
+                      : "text-gray-300"
+                  }`}
+                />
+              ))}
+            </div>
+            <span className="text-xs text-muted-foreground">4.1 (8 reviews)</span>
+          </div>
 
           {/* Summary */}
           {book.summary && (

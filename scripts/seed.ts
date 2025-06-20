@@ -1,4 +1,4 @@
-import { db } from '@/lib/db';
+import { getDB } from '@/lib/db';
 import { users, books, votes, comments, GENRES } from '@/lib/schema';
 
 const sampleUsers = [
@@ -128,6 +128,8 @@ const sampleVotes = [
 async function seed() {
     try {
         console.log('🌱 Starting database seeding...');
+
+        const db = getDB();
 
         // Clear existing data
         console.log('🧹 Clearing existing data...');

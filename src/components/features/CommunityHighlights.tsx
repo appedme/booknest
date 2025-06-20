@@ -28,69 +28,69 @@ export function CommunityHighlights({ books }: CommunityHighlightsProps) {
       icon: BookOpen,
       label: "Total Books",
       value: stats.totalBooks,
-      color: "text-blue-600",
-      bgColor: "bg-blue-100 dark:bg-blue-900/20",
+      color: "text-foreground",
+      bgColor: "bg-muted/30",
       description: "Books shared",
     },
     {
       icon: Clock,
       label: "This Week",
       value: stats.thisWeek,
-      color: "text-green-600",
-      bgColor: "bg-green-100 dark:bg-green-900/20",
+      color: "text-foreground",
+      bgColor: "bg-muted/30",
       description: "New additions",
     },
     {
       icon: Filter,
       label: "Genres",
       value: stats.totalGenres,
-      color: "text-purple-600",
-      bgColor: "bg-purple-100 dark:bg-purple-900/20",
+      color: "text-foreground",
+      bgColor: "bg-muted/30",
       description: "Different genres",
     },
     {
       icon: Heart,
       label: "Total Votes",
       value: stats.totalVotes,
-      color: "text-red-600",
-      bgColor: "bg-red-100 dark:bg-red-900/20",
+      color: "text-foreground",
+      bgColor: "bg-muted/30",
       description: "Community votes",
     },
     {
       icon: MessageCircle,
       label: "Comments",
       value: stats.totalComments,
-      color: "text-indigo-600",
-      bgColor: "bg-indigo-100 dark:bg-indigo-900/20",
+      color: "text-foreground",
+      bgColor: "bg-muted/30",
       description: "Discussions",
     },
     {
       icon: Users,
       label: "Active Readers",
       value: stats.activeReaders,
-      color: "text-orange-600",
-      bgColor: "bg-orange-100 dark:bg-orange-900/20",
+      color: "text-foreground",
+      bgColor: "bg-muted/30",
       description: "Community members",
     },
   ];
 
   return (
-    <section className="py-16 bg-gradient-to-r from-blue-50/50 to-purple-50/50 dark:from-blue-950/20 dark:to-purple-950/20">
+    <section className="py-12 bg-background border-b">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-12"
+          className="text-center mb-10"
         >
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <TrendingUp className="h-6 w-6 text-purple-500" />
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <TrendingUp className="h-6 w-6 text-primary" />
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground">
               Community Highlights
             </h2>
           </div>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-muted-foreground max-w-xl mx-auto">
             See how our reading community is growing and engaging with amazing books
           </p>
         </motion.div>
@@ -101,20 +101,20 @@ export function CommunityHighlights({ books }: CommunityHighlightsProps) {
             return (
               <motion.div
                 key={stat.label}
-                initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                initial={{ opacity: 0, y: 20, scale: 0.96 }}
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                transition={{ duration: 0.5, delay: index * 0.08 }}
               >
-                <Card className="text-center border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-card/80 backdrop-blur-sm card-hover">
-                  <CardContent className="p-4 md:p-6">
-                    <div className={`${stat.bgColor} rounded-full p-3 w-fit mx-auto mb-3`}>
-                      <Icon className={`h-5 w-5 md:h-6 md:w-6 ${stat.color}`} />
+                <Card className="text-center border bg-muted/40 shadow-none hover:shadow-md transition-all duration-200">
+                  <CardContent className="p-4 md:p-5 flex flex-col items-center">
+                    <div className="rounded-full p-2 mb-2 bg-muted flex items-center justify-center">
+                      <Icon className="h-5 w-5 md:h-6 md:w-6 text-primary" />
                     </div>
-                    <div className="text-2xl md:text-3xl font-bold text-foreground mb-1">
+                    <div className="text-xl md:text-2xl font-bold text-foreground mb-0.5">
                       <AnimatedCounter value={stat.value} />
                     </div>
-                    <div className="text-sm font-medium text-foreground mb-1">{stat.label}</div>
+                    <div className="text-xs font-medium text-foreground mb-0.5 tracking-tight">{stat.label}</div>
                     <div className="text-xs text-muted-foreground">{stat.description}</div>
                   </CardContent>
                 </Card>
@@ -131,8 +131,8 @@ export function CommunityHighlights({ books }: CommunityHighlightsProps) {
           transition={{ duration: 0.5, delay: 0.6 }}
           className="text-center mt-8"
         >
-          <Card className="inline-block bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-950/20 dark:to-orange-950/20 border-yellow-200 dark:border-yellow-800">
-            <CardContent className="p-4">
+          <Card className="inline-block bg-muted/60 border border-yellow-100 dark:border-yellow-900">
+            <CardContent className="p-3">
               <div className="flex items-center gap-2 text-yellow-700 dark:text-yellow-300">
                 <Star className="h-4 w-4" />
                 <span className="text-sm font-medium">

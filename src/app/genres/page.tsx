@@ -10,22 +10,6 @@ import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 
-// Popular genres list
-const POPULAR_GENRES = [
-    "Fiction",
-    "Non-Fiction",
-    "Mystery",
-    "Romance",
-    "Sci-Fi",
-    "Fantasy",
-    "Biography",
-    "History",
-    "Self-Help",
-    "Technology",
-    "Business",
-    "Health"
-];
-
 export default function GenresPage() {
     const { books, isLoading } = useBooks();
     const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
