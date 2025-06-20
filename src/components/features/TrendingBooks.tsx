@@ -1,94 +1,80 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { motion } from "framer-motion";
+import { BookCard } from "./BookCard";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, ThumbsUp, MessageCircle, ExternalLink } from "lucide-react";
+import { TrendingUp, ArrowRight } from "lucide-react";
+import { Book } from "@/types";
 import Link from "next/link";
-import type { Book } from "@/types";
-import { formatDistanceToNow } from "date-fns";
 
 interface TrendingBooksProps {
   books: Book[];
+  onVoteSuccess?: () => void;
+  onComment?: (bookId: number) => void;
 }
 
-export function TrendingBooks({ books }: TrendingBooksProps) {
-  // Calculate trending books based on score (upvotes, comments, recency)
+export function TrendingBooks({ books, onVoteSuccess, onComment }: TrendingBooksProps) {
+  // Sort books by engagement score (upvotes - downvotes + comments)
   const trendingBooks = books
-    .map(book => {
-      const score = (book.upvotes || 0) - (book.downvotes || 0) + (book.comments?.length || 0) * 0.5;
-      const daysSinceCreated = (Date.now() - new Date(book.createdAt).getTime()) / (1000 * 60 * 60 * 24);
-      const trendingScore = score / (daysSinceCreated + 1); // Decay over time
-      return { ...book, trendingScore };
+    .sort((a, b) => {
+      const scoreA = (a.upvotes || 0) - (a.downvotes || 0) + (a.comments?.length || 0) * 0.5;
+      const scoreB = (b.upvotes || 0) - (b.downvotes || 0) + (b.comments?.length || 0) * 0.5;
+      return scoreB - scoreA;
     })
-    .sort((a, b) => b.trendingScore - a.trendingScore)
-    .slice(0, 6);
+    .slice(0, 4);
 
   if (trendingBooks.length === 0) return null;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <TrendingUp className="h-5 w-5 text-orange-500" />
-          Trending Books
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <section className="py-12">
+      <div className="container">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-8"
+        >
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <TrendingUp className="h-6 w-6 text-orange-500" />
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+              Trending Now
+            </h2>
+          </div>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Discover the books that are creating buzz in our community right now
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {trendingBooks.map((book, index) => (
-            <Link key={book.id} href={`/books/${book.id}`}>
-              <Card className="hover:shadow-md transition-shadow cursor-pointer group">
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-3">
-                    {book.posterUrl ? (
-                      <img
-                        src={book.posterUrl}
-                        alt={book.name}
-                        className="w-12 h-16 object-cover rounded flex-shrink-0"
-                      />
-                    ) : (
-                      <div className="w-12 h-16 bg-muted rounded flex items-center justify-center flex-shrink-0">
-                        <span className="text-xs text-muted-foreground">📚</span>
-                      </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between mb-1">
-                        <h3 className="font-medium text-sm line-clamp-2 group-hover:text-primary transition-colors">
-                          {book.name}
-                        </h3>
-                        <Badge variant="secondary" className="ml-2 flex-shrink-0">
-                          #{index + 1}
-                        </Badge>
-                      </div>
-                      <Badge variant="outline" className="text-xs mb-2">
-                        {book.genre}
-                      </Badge>
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <ThumbsUp className="h-3 w-3 text-green-600" />
-                          {book.upvotes || 0}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <MessageCircle className="h-3 w-3 text-blue-600" />
-                          {book.comments?.length || 0}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
+            <motion.div
+              key={book.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
+              <BookCard book={book} onVoteSuccess={onVoteSuccess} onComment={onComment} />
+            </motion.div>
           ))}
         </div>
-        <div className="mt-4 text-center">
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="text-center"
+        >
           <Link href="/trending">
-            <Button variant="outline" size="sm">
+            <Button className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg hover:shadow-xl transition-all duration-300">
               View All Trending
+              <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>
-        </div>
-      </CardContent>
-    </Card>
+        </motion.div>
+      </div>
+    </section>
   );
 }

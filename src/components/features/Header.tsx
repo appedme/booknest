@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,16 +13,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
-import { BookOpen, Plus, User, LogOut, Settings, Menu, X, TrendingUp, Filter, BarChart3, Moon, Sun } from "lucide-react";
+import { BookOpen, Plus, User, LogOut, Settings, Menu, X, TrendingUp, Filter, BarChart3 } from "lucide-react";
 import Link from "next/link";
 import { AddBookDialog } from "./AddBookDialog";
 import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useTheme } from "@/components/theme-provider";
+import { motion, AnimatePresence } from "framer-motion";
 
 export function Header() {
   const { user, isAuthenticated, logout, isLoading } = useAuth();
-  const { theme, setTheme } = useTheme();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
@@ -39,7 +39,6 @@ export function Header() {
     { name: "Discover", href: "/", icon: BookOpen },
     { name: "Trending", href: "/trending", icon: TrendingUp },
     { name: "Genres", href: "/genres", icon: Filter },
-    { name: "Authors", href: "/authors", icon: User },
     { name: "Dashboard", href: "/dashboard", icon: BarChart3, authRequired: true },
   ];
 
@@ -49,19 +48,24 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 border-b border-gray-200">
+    <motion.header 
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60 border-b"
+    >
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3">
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-2.5 rounded-xl shadow-lg">
+          <Link href="/" className="flex items-center space-x-3 group">
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-2.5 rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300">
               <BookOpen className="h-5 w-5 text-white" />
             </div>
             <div className="flex flex-col">
-              <span className="font-bold text-xl bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+              <span className="font-bold text-xl  ">
                 BookNest
               </span>
-              <span className="text-xs text-gray-500 -mt-1">Discover & Share</span>
+              <span className="text-xs text-muted-foreground -mt-1">Discover & Share</span>
             </div>
           </Link>
 
@@ -70,14 +74,16 @@ export function Header() {
             {navigation.map((item) => {
               if (item.authRequired && !isAuthenticated) return null;
               const Icon = item.icon;
+              const isActive = isActivePath(item.href);
               return (
                 <Link key={item.name} href={item.href}>
                   <Button
                     variant="ghost"
-                    className={`h-9 px-3 text-sm font-medium transition-all ${isActivePath(item.href)
-                        ? "bg-blue-50 text-blue-700 shadow-sm"
-                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                      }`}
+                    className={`h-9 px-4 text-sm font-medium transition-all duration-200 ${
+                      isActive
+                        ? "bg-primary/10 text-primary shadow-sm border border-primary/20"
+                        : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                    }`}
                   >
                     <Icon className="h-4 w-4 mr-2" />
                     {item.name}
@@ -88,26 +94,14 @@ export function Header() {
           </nav>
 
           {/* Right Section */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2">
             {/* Theme Toggle */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="h-9 w-9 p-0"
-            >
-              {theme === 'dark' ? (
-                <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              ) : (
-                <Moon className="h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-              )}
-              <span className="sr-only">Toggle theme</span>
-            </Button>
-
+            <ThemeToggle />
+            
             {/* Add Book Button - Desktop */}
             <div className="hidden sm:flex">
               <AddBookDialog onBookAdded={() => window.location.reload()}>
-                <Button size="sm" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg">
+                <Button size="sm" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300">
                   <Plus className="h-4 w-4 mr-1" />
                   Share Book
                 </Button>
@@ -116,11 +110,11 @@ export function Header() {
 
             {/* User Menu */}
             {isLoading ? (
-              <div className="h-9 w-9 animate-pulse bg-gray-200 rounded-full" />
+              <div className="h-9 w-9 animate-pulse bg-muted rounded-full" />
             ) : isAuthenticated && user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-9 w-9 rounded-full ring-2 ring-transparent hover:ring-blue-200 transition-all">
+                  <Button variant="ghost" className="relative h-9 w-9 rounded-full ring-2 ring-transparent hover:ring-primary/20 transition-all duration-200">
                     <Avatar className="h-8 w-8">
                       <AvatarImage src={user.image || ""} alt={user.name || ""} />
                       <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-sm font-medium">
@@ -148,20 +142,16 @@ export function Header() {
                       <span>Dashboard</span>
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/profile" className="w-full cursor-pointer">
-                      <User className="mr-2 h-4 w-4" />
-                      <span>Profile</span>
-                    </Link>
+                  <DropdownMenuItem>
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/profile?tab=settings" className="w-full cursor-pointer">
-                      <Settings className="mr-2 h-4 w-4" />
-                      <span>Settings</span>
-                    </Link>
+                  <DropdownMenuItem>
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Settings</span>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
+                  <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Sign out</span>
                   </DropdownMenuItem>
@@ -169,7 +159,7 @@ export function Header() {
               </DropdownMenu>
             ) : (
               <Link href="/auth/signin">
-                <Button variant="outline" size="sm" className="border-gray-300 hover:bg-gray-50">
+                <Button variant="outline" size="sm" className="hover:bg-accent/50 transition-colors">
                   Sign In
                 </Button>
               </Link>
@@ -179,7 +169,7 @@ export function Header() {
             <Button
               variant="ghost"
               size="sm"
-              className="md:hidden p-2"
+              className="md:hidden p-2 hover:bg-accent/50"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -188,48 +178,58 @@ export function Header() {
         </div>
 
         {/* Mobile Navigation */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 bg-white">
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              {navigation.map((item) => {
-                if (item.authRequired && !isAuthenticated) return null;
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <Button
-                      variant="ghost"
-                      className={`w-full justify-start h-10 ${isActivePath(item.href)
-                          ? "bg-blue-50 text-blue-700"
-                          : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                        }`}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div 
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.2 }}
+              className="md:hidden border-t bg-background/95 backdrop-blur-md"
+            >
+              <div className="px-2 pt-2 pb-3 space-y-1">
+                {navigation.map((item) => {
+                  if (item.authRequired && !isAuthenticated) return null;
+                  const Icon = item.icon;
+                  const isActive = isActivePath(item.href);
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      <Icon className="h-4 w-4 mr-3" />
-                      {item.name}
-                    </Button>
-                  </Link>
-                );
-              })}
+                      <Button
+                        variant="ghost"
+                        className={`w-full justify-start h-10 ${
+                          isActive
+                            ? "bg-primary/10 text-primary"
+                            : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                        }`}
+                      >
+                        <Icon className="h-4 w-4 mr-3" />
+                        {item.name}
+                      </Button>
+                    </Link>
+                  );
+                })}
 
-              {/* Mobile Add Book Button */}
-              <div className="pt-2">
-                <AddBookDialog onBookAdded={() => {
-                  window.location.reload();
-                  setIsMobileMenuOpen(false);
-                }}>
-                  <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Share Book
-                  </Button>
-                </AddBookDialog>
+                {/* Mobile Add Book Button */}
+                <div className="pt-2">
+                  <AddBookDialog onBookAdded={() => {
+                    window.location.reload();
+                    setIsMobileMenuOpen(false);
+                  }}>
+                    <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Share Book
+                    </Button>
+                  </AddBookDialog>
+                </div>
               </div>
-            </div>
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-    </header>
+    </motion.header>
   );
 }

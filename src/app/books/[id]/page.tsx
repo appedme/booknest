@@ -45,13 +45,13 @@ export default function BookPage() {
     // Use SWR hooks for data fetching
     const { book, isLoading: bookLoading, isError: bookError } = useBook(bookId);
     const { data: commentsData, isLoading: commentsLoading } = useSWR(
-        bookId ? `/api/comments?bookId=${bookId}&limit=50` : null,
+        bookId ? `/api/comments?bookId=${bookId}` : null,
         fetcher
     );
     const comments = (commentsData as { comments: CommentType[] })?.comments || [];
     const { upvote, downvote, hasVoted, voteType, isLoading: votingLoading } = useVoting(parseInt(bookId));
 
-    // Calculate total comment count including replies (limited to first 50)
+    // Calculate total comment count including replies
     const totalCommentCount = comments.reduce((total, comment) => {
         return total + 1 + (comment.replies?.length || 0);
     }, 0);
@@ -59,42 +59,6 @@ export default function BookPage() {
     const [isSubmittingComment, setIsSubmittingComment] = useState(false);
     const [newComment, setNewComment] = useState("");
     const [username, setUsername] = useState("");
-
-    // Share functionality
-    const handleShare = async () => {
-        if (!book) return;
-        
-        // Create slug from book name
-        const slug = book.name.toLowerCase()
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/(^-|-$)/g, '');
-            
-        const shareUrl = `${window.location.origin}/books/${book.id}/${slug}`;
-        const shareData = {
-            title: `${book.name} - BookNest`,
-            text: `Check out "${book.name}" on BookNest - ${book.summary?.substring(0, 100)}${book.summary && book.summary.length > 100 ? '...' : ''}`,
-            url: shareUrl,
-        };
-
-        try {
-            if (navigator.share) {
-                await navigator.share(shareData);
-            } else {
-                // Fallback to clipboard
-                await navigator.clipboard.writeText(shareUrl);
-                alert('Link copied to clipboard!');
-            }
-        } catch (error) {
-            // Fallback for clipboard API failure
-            const textArea = document.createElement('textarea');
-            textArea.value = shareUrl;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-            alert('Link copied to clipboard!');
-        }
-    };
 
     const handleVote = async (action: 'upvote' | 'downvote') => {
         if (!isAuthenticated) {
@@ -134,8 +98,8 @@ export default function BookPage() {
 
             if (response.ok) {
                 const comment = await response.json() as Comment;
-                // Revalidate comments with limit
-                await mutate(`/api/comments?bookId=${bookId}&limit=50`);
+                // Revalidate comments
+                await mutate(`/api/comments?bookId=${bookId}`);
                 setNewComment("");
                 setUsername("");
             }
@@ -256,7 +220,7 @@ export default function BookPage() {
                                                     Read Book
                                                 </a>
                                             </Button>
-                                            <Button variant="outline" size="sm" onClick={handleShare}>
+                                            <Button variant="outline" size="sm">
                                                 <Share2 className="h-4 w-4 mr-2" />
                                                 Share
                                             </Button>
@@ -305,20 +269,13 @@ export default function BookPage() {
                                 {/* Comments List */}
                                 <div className="space-y-4">
                                     {comments && comments.length > 0 ? (
-                                        <>
-                                            {comments.slice(0, 50).map((comment) => (
-                                                <Comment
-                                                    key={comment.id}
-                                                    comment={comment}
-                                                    bookId={bookId}
-                                                />
-                                            ))}
-                                            {comments.length >= 50 && (
-                                                <div className="text-center py-4 text-muted-foreground">
-                                                    <p className="text-sm">Showing first 50 comments. More comments may be available.</p>
-                                                </div>
-                                            )}
-                                        </>
+                                        comments.map((comment) => (
+                                            <Comment
+                                                key={comment.id}
+                                                comment={comment}
+                                                bookId={bookId}
+                                            />
+                                        ))
                                     ) : (
                                         <div className="text-center py-8 text-muted-foreground">
                                             <MessageCircle className="h-8 w-8 mx-auto mb-2 opacity-50" />

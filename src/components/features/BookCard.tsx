@@ -1,22 +1,15 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { 
-  BookOpen, 
-  Heart, 
-  MessageCircle, 
-  ThumbsUp, 
-  ThumbsDown, 
-  Calendar, 
-  ExternalLink,
-  User
-} from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import type { Book } from "@/types";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Heart, MessageCircle, ExternalLink, ThumbsUp, ThumbsDown, Loader2 } from "lucide-react";
+import { Book } from "@/types";
 import { formatDistanceToNow } from "date-fns";
+import { useVoting } from "@/hooks/useVoting";
+import Link from "next/link";
+import { motion } from "framer-motion";
 
 interface BookCardProps {
   book: Book;
@@ -25,133 +18,157 @@ interface BookCardProps {
 }
 
 export function BookCard({ book, onComment, onVoteSuccess }: BookCardProps) {
-  const router = useRouter();
+  const { upvote, downvote, hasVoted, voteType, isLoading } = useVoting(book.id);
 
-  const handleCardClick = () => {
-    router.push(`/books/${book.id}`);
-  };
-
-  const handleCommentClick = (e: React.MouseEvent) => {
+  const handleVote = async (e: React.MouseEvent, voteAction: 'upvote' | 'downvote') => {
+    e.preventDefault();
     e.stopPropagation();
-    if (onComment) {
-      onComment(book.id);
-    } else {
-      router.push(`/books/${book.id}#comments`);
+    try {
+      if (voteAction === 'upvote') {
+        await upvote();
+      } else {
+        await downvote();
+      }
+      onVoteSuccess?.();
+    } catch (error) {
+      console.error('Voting error:', error);
     }
   };
 
-  const handleExternalClick = (e: React.MouseEvent) => {
+  const handleComment = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
-    // Opens in new tab
+    onComment?.(book.id);
   };
 
-  const scoreCalculation = (book.upvotes || 0) - (book.downvotes || 0);
-  const totalVotes = (book.upvotes || 0) + (book.downvotes || 0);
-
-  return (
-    <Card className="group cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1 h-[400px] overflow-hidden relative">
-      <div 
-        onClick={handleCardClick} 
-        className="relative h-full w-full bg-cover bg-center transition-transform duration-300 group-hover:scale-105"
-        style={{
-          backgroundImage: book.posterUrl 
-            ? `linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.8) 100%), url(${book.posterUrl})`
-            : `linear-gradient(135deg, rgb(37, 99, 235) 0%, rgb(147, 51, 234) 100%)`
-        }}
-      >
-        {/* Fallback for no image */}
-        {!book.posterUrl && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center text-white">
-              <div className="w-16 h-16 mx-auto mb-3 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                <BookOpen className="w-8 h-8 text-white" />
-              </div>
-              <p className="text-sm font-medium">No Cover Available</p>
+  const handleReadBook = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    window.open(book.url, '_blank', 'noopener,noreferrer');
+  };  return (
+    <motion.div 
+      className="group h-full"
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
+    >
+      <Card className="h-full overflow-hidden transition-all duration-300 hover:shadow-xl border bg-card hover:bg-card/80 backdrop-blur-sm">
+        {/* Book Poster */}
+        {book.posterUrl && (
+          <Link href={`/books/${book.id}`} className="block relative">
+            <div className="relative overflow-hidden aspect-[3/4] bg-gradient-to-br from-muted to-muted/50">
+              <img
+                src={book.posterUrl}
+                alt={book.name}
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <motion.div 
+                className="absolute bottom-4 left-4 right-4"
+                initial={{ y: 20, opacity: 0 }}
+                whileHover={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Button size="sm" className="w-full bg-background/90 text-foreground hover:bg-background backdrop-blur-sm border shadow-lg">
+                  View Details
+                </Button>
+              </motion.div>
             </div>
-          </div>
+          </Link>
         )}
-        
-        {/* Top badges */}
-        <div className="absolute top-3 left-3 right-3 flex justify-between items-start">
-          <Badge className="bg-white/90 dark:bg-gray-800/90 text-gray-700 dark:text-gray-200 shadow-sm backdrop-blur-sm">
-            {book.genre}
-          </Badge>
-          <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full px-2 py-1 flex items-center gap-1 shadow-sm">
-            <ThumbsUp className="w-3 h-3 text-green-600" />
-            <span className="text-xs font-medium dark:text-gray-200">{scoreCalculation}</span>
-          </div>
-        </div>
 
-        {/* Title overlay - Always visible */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
-          <h3 className="font-bold text-lg leading-tight text-white line-clamp-2 mb-2">
-            {book.name}
-          </h3>
-          
-          {/* Stats - Always visible */}
-          <div className="flex items-center justify-between text-sm text-white/80">
-            <div className="flex items-center gap-3">
-              <span className="flex items-center gap-1">
-                <ThumbsUp className="w-3 h-3 text-green-400" />
-                {book.upvotes || 0}
-              </span>
-              <span className="flex items-center gap-1">
-                <MessageCircle className="w-3 h-3 text-blue-400" />
-                {book.comments?.length || 0}
-              </span>
-            </div>
-            <span className="flex items-center gap-1 text-xs">
-              <Calendar className="w-3 h-3" />
+        <CardContent className="p-5 space-y-4 flex-1 flex flex-col">
+          {/* Genre Badge & Date */}
+          <div className="flex items-center justify-between">
+            <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs font-medium px-2 py-1 rounded-full">
+              {book.genre}
+            </Badge>
+            <span className="text-xs text-muted-foreground">
               {formatDistanceToNow(new Date(book.createdAt), { addSuffix: true })}
             </span>
           </div>
-        </div>
 
-        {/* Summary overlay - Only visible on hover */}
-        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center p-6">
-          <div className="text-center text-white space-y-4">
-            <h3 className="font-bold text-xl leading-tight">
+          {/* Book Title */}
+          <Link href={`/books/${book.id}`}>
+            <h3 className="font-bold text-lg leading-tight line-clamp-2 hover:text-primary transition-colors cursor-pointer">
               {book.name}
             </h3>
-            
-            {book.summary && (
-              <p className="text-sm leading-relaxed text-white/90 line-clamp-4">
-                {book.summary}
-              </p>
-            )}
+          </Link>
 
-            {/* Action Buttons on hover */}
-            <div className="flex gap-2 mt-4">
+          {/* Summary */}
+          {book.summary && (
+            <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed flex-1">
+              {book.summary}
+            </p>
+          )}
+
+          {/* Actions */}
+          <div className="flex items-center justify-between pt-2 border-t">
+            {/* Vote Buttons */}
+            <div className="flex items-center space-x-1">
               <Button
-                variant="secondary"
+                variant="ghost"
                 size="sm"
-                className="flex-1 h-8 text-xs bg-white/90 text-gray-900 hover:bg-white"
-                onClick={handleCommentClick}
+                className={`h-8 px-2 rounded-full transition-all duration-200 ${voteType === 'upvote'
+                    ? 'text-green-700 bg-green-100 hover:bg-green-200 dark:bg-green-900 dark:text-green-300'
+                    : 'text-muted-foreground hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/50'
+                  }`}
+                onClick={(e) => handleVote(e, 'upvote')}
+                disabled={isLoading}
               >
-                <MessageCircle className="w-3 h-3 mr-1" />
-                Comment
+                {isLoading && voteType === 'upvote' ? (
+                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                ) : (
+                  <ThumbsUp className={`h-4 w-4 mr-1 ${voteType === 'upvote' ? 'fill-current' : ''}`} />
+                )}
+                <span className="text-xs font-medium">{book.upvotes || 0}</span>
               </Button>
               <Button
-                variant="secondary"
+                variant="ghost"
                 size="sm"
-                className="h-8 px-3 text-xs bg-white/90 text-gray-900 hover:bg-white"
-                onClick={handleExternalClick}
-                asChild
+                className={`h-8 px-2 rounded-full transition-all duration-200 ${voteType === 'downvote'
+                    ? 'text-red-700 bg-red-100 hover:bg-red-200 dark:bg-red-900 dark:text-red-300'
+                    : 'text-muted-foreground hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/50'
+                  }`}
+                onClick={(e) => handleVote(e, 'downvote')}
+                disabled={isLoading}
               >
-                <a href={book.url} target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="w-3 h-3" />
-                </a>
+                {isLoading && voteType === 'downvote' ? (
+                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                ) : (
+                  <ThumbsDown className={`h-4 w-4 mr-1 ${voteType === 'downvote' ? 'fill-current' : ''}`} />
+                )}
+                <span className="text-xs font-medium">{book.downvotes || 0}</span>
               </Button>
             </div>
 
-            {/* Author info on hover */}
-            <div className="flex items-center justify-center gap-2 text-xs text-white/70 pt-2">
-              <User className="w-3 h-3" />
-              <span>Shared by Community</span>
-            </div>
+            {/* Comments */}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 px-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full transition-all duration-200"
+              onClick={handleComment}
+            >
+              <MessageCircle className="h-4 w-4 mr-1" />
+              <span className="text-xs">{book.comments?.length || 0}</span>
+            </Button>
           </div>
-        </div>
-      </div>
-    </Card>
+
+          {/* Read Book Button */}
+          <div className="pt-2">
+            <Button
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-md hover:shadow-lg transition-all duration-300"
+              size="sm"
+              onClick={handleReadBook}
+            >
+              <ExternalLink className="h-4 w-4 mr-2" />
+              Read Book
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }
