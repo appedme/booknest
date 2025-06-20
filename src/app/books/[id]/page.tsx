@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useBook } from "@/hooks/useBooks";
 import { useVoting } from "@/hooks/useVoting";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,8 +14,12 @@ import { Input } from "@/components/ui/input";
 import {
     ArrowLeft,
     ExternalLink,
+    TrendingUp,
+    TrendingDown,
     MessageCircle,
+    Heart,
     Share2,
+    BookOpen,
     User,
     Calendar,
     ThumbsUp,
@@ -24,7 +28,7 @@ import {
     Loader2
 } from "lucide-react";
 import Link from "next/link";
-import { Comment } from "@/types";
+import { Comment, Book } from "@/types";
 import useSWR, { mutate } from "swr";
 
 // Fetcher function for SWR
@@ -38,7 +42,8 @@ const fetcher = async (url: string) => {
 
 export default function BookPage() {
     const params = useParams();
-    const { isAuthenticated } = useAuth();
+    const router = useRouter();
+    const { user, isAuthenticated } = useAuth();
     const bookId = params.id as string;
     
     // Use SWR hooks for data fetching
@@ -90,6 +95,7 @@ export default function BookPage() {
             });
 
             if (response.ok) {
+                const comment = await response.json() as Comment;
                 // Revalidate comments
                 await mutate(`/api/comments?bookId=${bookId}`);
                 setNewComment("");
@@ -139,7 +145,7 @@ export default function BookPage() {
                                 <span className="text-2xl">📚</span>
                             </div>
                             <h2 className="text-2xl font-semibold text-gray-900 mb-4">Book not found</h2>
-                            <p className="text-gray-600 mb-8">The book you&apos;re looking for doesn&apos;t exist or has been removed.</p>
+                            <p className="text-gray-600 mb-8">The book you're looking for doesn't exist or has been removed.</p>
                             <Link href="/">
                                 <Button variant="outline">
                                     <ArrowLeft className="h-4 w-4 mr-2" />
@@ -334,7 +340,7 @@ export default function BookPage() {
                                 </div>
                                 {hasVoted && (
                                     <p className="text-xs text-muted-foreground text-center">
-                                        You&apos;ve voted for this book
+                                        You've voted for this book
                                     </p>
                                 )}
                             </CardContent>
