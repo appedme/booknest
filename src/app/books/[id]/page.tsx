@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useBook } from "@/hooks/useBooks";
 import { useVoting } from "@/hooks/useVoting";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,21 +14,17 @@ import { Input } from "@/components/ui/input";
 import {
     ArrowLeft,
     ExternalLink,
-    TrendingUp,
-    TrendingDown,
     MessageCircle,
-    Heart,
-    Share2,
-    BookOpen,
     User,
     Calendar,
     ThumbsUp,
     ThumbsDown,
     Send,
-    Loader2
+    Loader2,
+    Share2
 } from "lucide-react";
 import Link from "next/link";
-import { Comment, Book } from "@/types";
+import { Comment } from "@/types";
 import useSWR, { mutate } from "swr";
 
 // Fetcher function for SWR
@@ -42,16 +38,16 @@ const fetcher = async (url: string) => {
 
 export default function BookPage() {
     const params = useParams();
-    const router = useRouter();
     const { user, isAuthenticated } = useAuth();
     const bookId = params.id as string;
     
     // Use SWR hooks for data fetching
     const { book, isLoading: bookLoading, isError: bookError } = useBook(bookId);
-    const { data: comments, isLoading: commentsLoading } = useSWR(
+    const { data: commentsData, isLoading: commentsLoading } = useSWR(
         bookId ? `/api/comments?bookId=${bookId}` : null,
         fetcher
     );
+    const comments = (commentsData as { comments: Comment[] })?.comments || [];
     const { upvote, downvote, hasVoted, voteType, isLoading: votingLoading } = useVoting(parseInt(bookId));
     
     const [isSubmittingComment, setIsSubmittingComment] = useState(false);
@@ -233,7 +229,7 @@ export default function BookPage() {
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <MessageCircle className="h-5 w-5" />
-                                    Comments ({(comments as Comment[])?.length || 0})
+                                    Comments ({comments.length || 0})
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-6">
@@ -266,8 +262,8 @@ export default function BookPage() {
 
                                 {/* Comments List */}
                                 <div className="space-y-4">
-                                    {(comments as Comment[]) && (comments as Comment[]).length > 0 ? (
-                                        (comments as Comment[]).map((comment: Comment) => (
+                                    {comments && comments.length > 0 ? (
+                                        comments.map((comment: Comment) => (
                                             <div key={comment.id} className="bg-muted/50 rounded-lg p-4">
                                                 <div className="flex items-start gap-3">
                                                     <div className="bg-primary/10 rounded-full p-2 flex-shrink-0">
@@ -358,7 +354,7 @@ export default function BookPage() {
                                 </div>
                                 <div className="flex justify-between items-center">
                                     <span className="text-muted-foreground">Comments</span>
-                                    <span className="font-semibold">{(comments as Comment[])?.length || 0}</span>
+                                    <span className="font-semibold">{comments.length || 0}</span>
                                 </div>
                                 <div className="flex justify-between items-center">
                                     <span className="text-muted-foreground">Added</span>
