@@ -3,6 +3,11 @@
 import { useCallback, useState } from 'react';
 import { BookCard } from '@/components/features/BookCard';
 import { AddBookDialog } from '@/components/features/AddBookDialog';
+import { TrendingBooks } from '@/components/features/TrendingBooks';
+import { LatestBooks } from '@/components/features/LatestBooks';
+import { PopularBooks } from '@/components/features/PopularBooks';
+import { GenreStats } from '@/components/features/GenreStats';
+import { CommunityHighlights } from '@/components/features/CommunityHighlights';
 import { Button } from '@/components/ui/button';
 import {
   BookOpen,
@@ -61,9 +66,30 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       {/* Main Content */}
       <section className="py-8">
-        <div className="container space-y-6">
+        <div className="container space-y-8">
+          {/* Hero Sections */}
+          {books && books.length > 0 && (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2 space-y-6">
+                <TrendingBooks books={books} />
+                <LatestBooks books={books} />
+              </div>
+              <div className="space-y-6">
+                <CommunityHighlights books={books} onBookAdded={handleBookAdded} />
+                <PopularBooks books={books} />
+                <GenreStats books={books} />
+              </div>
+            </div>
+          )}
+
           {/* View Toggle */}
-          <div className="flex justify-end">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">All Books</h1>
+              <p className="text-muted-foreground mt-1">
+                {books?.length || 0} book{(books?.length || 0) !== 1 ? 's' : ''} available
+              </p>
+            </div>
             <div className="flex items-center gap-1 border rounded-lg p-1">
               <Button
                 variant={viewMode === 'grid' ? 'default' : 'ghost'}
@@ -81,16 +107,6 @@ export default function Home() {
               >
                 <List className="h-4 w-4" />
               </Button>
-            </div>
-          </div>
-
-          {/* Results Header */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">All Books</h1>
-              <p className="text-muted-foreground mt-1">
-                {books?.length || 0} book{(books?.length || 0) !== 1 ? 's' : ''} available
-              </p>
             </div>
           </div>
 
