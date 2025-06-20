@@ -28,7 +28,7 @@ export function useBooks(filters?: {
   if (filters?.offset) params.append('offset', filters.offset.toString());
 
   const url = `/api/books${params.toString() ? `?${params.toString()}` : ''}`;
-  
+
   const { data, error, isLoading, mutate } = useSWR(url, fetcher);
 
   return {

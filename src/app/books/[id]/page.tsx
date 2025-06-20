@@ -30,18 +30,18 @@ import useSWR, { mutate } from "swr";
 
 // Fetcher function for SWR
 const fetcher = async (url: string) => {
-  const res = await fetch(url);
-  if (!res.ok) {
-    throw new Error('Failed to fetch data');
-  }
-  return res.json();
+    const res = await fetch(url);
+    if (!res.ok) {
+        throw new Error('Failed to fetch data');
+    }
+    return res.json();
 };
 
 export default function BookPage() {
     const params = useParams();
     const { user, isAuthenticated } = useAuth();
     const bookId = params.id as string;
-    
+
     // Use SWR hooks for data fetching
     const { book, isLoading: bookLoading, isError: bookError } = useBook(bookId);
     const { data: commentsData, isLoading: commentsLoading } = useSWR(
@@ -50,12 +50,12 @@ export default function BookPage() {
     );
     const comments = (commentsData as { comments: CommentType[] })?.comments || [];
     const { upvote, downvote, hasVoted, voteType, isLoading: votingLoading } = useVoting(parseInt(bookId));
-    
+
     // Calculate total comment count including replies
     const totalCommentCount = comments.reduce((total, comment) => {
         return total + 1 + (comment.replies?.length || 0);
     }, 0);
-    
+
     const [isSubmittingComment, setIsSubmittingComment] = useState(false);
     const [newComment, setNewComment] = useState("");
     const [username, setUsername] = useState("");
@@ -270,10 +270,10 @@ export default function BookPage() {
                                 <div className="space-y-4">
                                     {comments && comments.length > 0 ? (
                                         comments.map((comment) => (
-                                            <Comment 
-                                                key={comment.id} 
-                                                comment={comment} 
-                                                bookId={bookId} 
+                                            <Comment
+                                                key={comment.id}
+                                                comment={comment}
+                                                bookId={bookId}
                                             />
                                         ))
                                     ) : (

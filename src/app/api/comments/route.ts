@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     const session = await auth();
     const user = session?.user as User;
     const db = getDB();
-    
+
     // Get all comments for the book (both parent comments and replies)
     const allComments = await db.select()
       .from(comments)

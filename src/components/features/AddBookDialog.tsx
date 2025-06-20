@@ -65,7 +65,7 @@ export function AddBookDialog({ onBookAdded, redirectToDashboard = false, childr
 
     try {
       await createBook(formData);
-      
+
       // Reset form
       setFormData({
         name: '',
@@ -76,7 +76,7 @@ export function AddBookDialog({ onBookAdded, redirectToDashboard = false, childr
       });
       setOpen(false);
       onBookAdded?.();
-      
+
       if (redirectToDashboard) {
         router.push('/dashboard');
       }

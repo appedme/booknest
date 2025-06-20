@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/wrappers/AuthProvider";
 import { SWRProvider } from "@/wrappers/SWRProvider";
 import { Header } from "@/components/features/Header";
+import { Footer } from "@/components/features/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,6 +38,7 @@ export default function RootLayout({
               <main className="flex-1">
                 {children}
               </main>
+              <Footer />
             </div>
           </SWRProvider>
         </AuthProvider>

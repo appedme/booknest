@@ -14,7 +14,7 @@ const fetcher = async (url: string) => {
 
 export function useVoting(bookId: number) {
   const { isAuthenticated } = useAuth();
-  
+
   // SWR hook for vote status
   const { data: voteData, error, isLoading } = useSWR(
     bookId ? `/api/votes?bookId=${bookId}` : null,
