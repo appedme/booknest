@@ -39,6 +39,7 @@ export function Header() {
     { name: "Discover", href: "/", icon: BookOpen },
     { name: "Trending", href: "/trending", icon: TrendingUp },
     { name: "Genres", href: "/genres", icon: Filter },
+    { name: "Authors", href: "/authors", icon: User },
     { name: "Dashboard", href: "/dashboard", icon: BarChart3, authRequired: true },
   ];
 
@@ -147,13 +148,17 @@ export function Header() {
                       <span>Dashboard</span>
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <User className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile" className="w-full cursor-pointer">
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Profile</span>
+                    </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile?tab=settings" className="w-full cursor-pointer">
+                      <Settings className="mr-2 h-4 w-4" />
+                      <span>Settings</span>
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut} className="text-red-600">

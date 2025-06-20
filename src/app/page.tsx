@@ -8,6 +8,8 @@ import { LatestBooks } from '@/components/features/LatestBooks';
 import { PopularBooks } from '@/components/features/PopularBooks';
 import { GenreStats } from '@/components/features/GenreStats';
 import { CommunityHighlights } from '@/components/features/CommunityHighlights';
+import { ActiveDiscussions } from '@/components/features/ActiveDiscussions';
+import { TopAuthors } from '@/components/features/TopAuthors';
 import { Button } from '@/components/ui/button';
 import {
   BookOpen,
@@ -69,13 +71,20 @@ export default function Home() {
         <div className="container space-y-8">
           {/* Hero Sections */}
           {books && books.length > 0 && (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2 space-y-6">
-                <TrendingBooks books={books} />
-                <LatestBooks books={books} />
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+              {/* Main Content - 3 columns */}
+              <div className="lg:col-span-3 space-y-6">
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                  <TrendingBooks books={books} />
+                  <LatestBooks books={books} />
+                </div>
               </div>
+              
+              {/* Sidebar - 1 column */}
               <div className="space-y-6">
                 <CommunityHighlights books={books} onBookAdded={handleBookAdded} />
+                <ActiveDiscussions books={books} />
+                <TopAuthors books={books} />
                 <PopularBooks books={books} />
                 <GenreStats books={books} />
               </div>

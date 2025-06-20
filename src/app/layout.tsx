@@ -52,7 +52,7 @@ export default function RootLayout({
         <ThemeProvider defaultTheme="system" storageKey="booknest-theme">
           <AuthProvider>
             <SWRProvider>
-              <div className="min-h-screen flex flex-col">
+              <div className="min-h-screen flex flex-col items-center justify-center">
                 <Header />
                 <main className="flex-1">
                   {children}
