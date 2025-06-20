@@ -525,22 +525,22 @@ export default function BookPage() {
                                         <div className="flex items-start gap-4">
                                             <Avatar className="h-16 w-16 border-2 border-border">
                                                 <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80 text-white text-lg font-bold">
-                                                    {book.authorName?.charAt(0)?.toUpperCase() || book.userId?.charAt(0)?.toUpperCase() || 'A'}
+                                                    {book.authorName?.charAt(0)?.toUpperCase() || 'A'}
                                                 </AvatarFallback>
                                             </Avatar>
                                             
                                             <div className="flex-1">
                                                 <div className="flex items-center gap-3 mb-2">
                                                     <h4 className="text-lg font-semibold">
-                                                        {book.authorName || `User ${book.userId?.slice(-4) || 'Anonymous'}`}
+                                                        {book.authorName || 'Anonymous Contributor'}
                                                     </h4>
                                                     <Badge variant="secondary" className="text-xs">
-                                                        Contributor
+                                                        Author
                                                     </Badge>
                                                 </div>
                                                 
                                                 <p className="text-muted-foreground text-sm mb-3">
-                                                    Added this book to BookNest on {new Date(book.createdAt).toLocaleDateString('en-US', {
+                                                    Book published on {new Date(book.createdAt).toLocaleDateString('en-US', {
                                                         year: 'numeric',
                                                         month: 'long',
                                                         day: 'numeric'
@@ -550,22 +550,29 @@ export default function BookPage() {
                                                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
                                                     <div className="flex items-center gap-1">
                                                         <BookOpen className="h-4 w-4" />
-                                                        <span>Books shared: {Math.floor(Math.random() * 50) + 1}</span>
+                                                        <span>Genre: {book.genre?.replace(/_/g, ' ') || 'Uncategorized'}</span>
                                                     </div>
+                                                    {(book.upvotes > 0 || book.downvotes > 0) && (
+                                                        <div className="flex items-center gap-1">
+                                                            <Star className="h-4 w-4" />
+                                                            <span>Rating: {book.upvotes > 0 ? ((book.upvotes / (book.upvotes + book.downvotes)) * 5).toFixed(1) : '0'}/5</span>
+                                                        </div>
+                                                    )}
                                                     <div className="flex items-center gap-1">
-                                                        <Star className="h-4 w-4" />
-                                                        <span>Rating: {(Math.random() * 2 + 3).toFixed(1)}/5</span>
-                                                    </div>
-                                                    <div className="flex items-center gap-1">
-                                                        <Calendar className="h-4 w-4" />
-                                                        <span>Member since {new Date(2024, Math.floor(Math.random() * 12)).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}</span>
+                                                        <MessageCircle className="h-4 w-4" />
+                                                        <span>{totalCommentCount} comments</span>
                                                     </div>
                                                 </div>
                                             </div>
                                             
-                                            <Button variant="outline" size="sm" className="hover:bg-muted/50">
-                                                <Users className="h-4 w-4 mr-2" />
-                                                View Profile
+                                            <Button 
+                                                variant="outline" 
+                                                size="sm" 
+                                                className="hover:bg-muted/50"
+                                                onClick={() => window.open(book.url, '_blank')}
+                                            >
+                                                <ExternalLink className="h-4 w-4 mr-2" />
+                                                Read Book
                                             </Button>
                                         </div>
                                     </CardContent>

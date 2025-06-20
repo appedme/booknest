@@ -37,24 +37,48 @@ export function GoogleBookCard({ book, onVote, compact = false }: GoogleBookCard
 
   const formatGenre = (genre: string) => {
     return genre?.replace(/_/g, ' ') || "Uncategorized";
-  }; return (<div className="google-book-card group relative">      {/* Book Cover */}      <div className="relative mb-3 overflow-hidden rounded-lg">        <Link href={`/books/${book.id}`} className="block">          {!imageError && book.posterUrl ? (<div className="relative bg-gray-100 rounded-lg overflow-hidden" style={{ aspectRatio: '3/4' }}>              <Image src={book.posterUrl} alt={book.name} fill className={`object-cover transition-all duration-300 group-hover:scale-105 ${isLoading ? 'opacity-0' : 'opacity-100'}`} onLoad={() => setIsLoading(false)} onError={() => { setImageError(true); setIsLoading(false); }} sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw" />              {isLoading && (<div className="absolute inset-0 bg-gray-200 animate-pulse rounded-lg" />)}            </div>) : (
-    <div
-      className="bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center text-blue-600"
-      style={{ aspectRatio: '3/4' }}
-    >
-      <div className="text-center p-4">
-        <div className="w-12 h-12 bg-blue-300 rounded-full flex items-center justify-center mx-auto mb-2">
-          <span className="text-xl font-bold text-white">
-            {book.name.charAt(0).toUpperCase()}
-          </span>
-        </div>
-        <p className="text-xs font-medium text-blue-700 line-clamp-2">
-          {book.name}
-        </p>
-      </div>
-    </div>
-  )}
-  </Link>
+  };  return (
+    <div className="google-book-card group relative w-full max-w-[180px] mx-auto">
+      {/* Book Cover */}
+      <div className="relative mb-3 overflow-hidden rounded-lg">
+        <Link href={`/books/${book.id}`} className="block">
+          {!imageError && book.posterUrl ? (
+            <div className="relative bg-gray-100 rounded-lg overflow-hidden w-full h-[240px]">
+              <Image
+                src={book.posterUrl}
+                alt={book.name}
+                fill
+                className={`object-cover transition-all duration-300 group-hover:scale-105 ${
+                  isLoading ? 'opacity-0' : 'opacity-100'
+                }`}
+                onLoad={() => setIsLoading(false)}
+                onError={() => {
+                  setImageError(true);
+                  setIsLoading(false);
+                }}
+                sizes="180px"
+              />
+              {isLoading && (
+                <div className="absolute inset-0 bg-gray-200 animate-pulse rounded-lg" />
+              )}
+            </div>
+          ) : (
+            <div
+              className="bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center text-blue-600 w-full h-[240px]"
+            >
+              <div className="text-center p-4">
+                <div className="w-12 h-12 bg-blue-300 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <span className="text-xl font-bold text-white">
+                    {book.name.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+                <p className="text-xs font-medium text-blue-700 line-clamp-2">
+                  {book.name}
+                </p>
+              </div>
+            </div>
+          )}
+        </Link>
 
     {/* Hover Actions */}
     <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -89,11 +113,11 @@ export function GoogleBookCard({ book, onVote, compact = false }: GoogleBookCard
   </div>
 
     {/* Book Info */}
-    <div className="space-y-2">
+    <div className="space-y-2 flex-1 min-h-[120px] flex flex-col">
       {/* Title */}
       <Link href={`/books/${book.id}`} className="block">
         <h3
-          className="font-normal text-sm leading-tight line-clamp-2 hover:underline transition-colors"
+          className="font-normal text-sm leading-tight line-clamp-2 hover:underline transition-colors min-h-[2.5rem]"
           style={{ color: 'var(--google-text-primary)' }}
           title={book.name}
         >
@@ -110,7 +134,7 @@ export function GoogleBookCard({ book, onVote, compact = false }: GoogleBookCard
         {formatAuthor(book.authorName)}
       </p>
 
-      {/* Genre Badge */}
+      {/* Genre Badge and Rating */}
       <div className="flex items-center justify-between">
         <Badge
           variant="secondary"
@@ -132,7 +156,7 @@ export function GoogleBookCard({ book, onVote, compact = false }: GoogleBookCard
 
       {/* Engagement Actions */}
       {!compact && (
-        <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+        <div className="flex items-center justify-between pt-2 border-t border-gray-100 mt-auto">
           <div className="flex items-center space-x-3">
             <button
               onClick={() => handleVote('up')}
