@@ -37,6 +37,18 @@ export interface Comment {
   authorImage?: string | null;
   createdAt: string;
   bookId: number;
+  parentCommentId?: number | null;
+  replies?: Comment[];
+  likeCount?: number;
+  isLiked?: boolean;
+}
+
+export interface CommentLike {
+  id: number;
+  commentId: number;
+  userId: string | null;
+  ipHash: string | null;
+  createdAt: string;
 }
 
 export interface Vote {

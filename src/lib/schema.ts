@@ -88,8 +88,20 @@ export const comments = sqliteTable("comments", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   bookId: integer("book_id").notNull(),
   userId: text("user_id").references(() => users.id), // Reference to auth user
+  parentCommentId: integer("parent_comment_id"), // For replies - will reference comments.id
   authorName: text("author_name"), // Display name for comment
   content: text("content").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .$defaultFn(() => new Date()),
+});
+
+// Comment likes table
+export const commentLikes = sqliteTable("comment_likes", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  commentId: integer("comment_id").notNull().references(() => comments.id, { onDelete: "cascade" }),
+  userId: text("user_id").references(() => users.id), // Reference to auth user
+  ipHash: text("ip_hash"), // For anonymous likes fallback
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .$defaultFn(() => new Date()),

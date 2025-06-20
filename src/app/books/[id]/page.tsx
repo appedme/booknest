@@ -24,7 +24,8 @@ import {
     Share2
 } from "lucide-react";
 import Link from "next/link";
-import { Comment } from "@/types";
+import { Comment as CommentType } from "@/types";
+import { Comment } from "@/components/features/Comment";
 import useSWR, { mutate } from "swr";
 
 // Fetcher function for SWR
@@ -47,8 +48,13 @@ export default function BookPage() {
         bookId ? `/api/comments?bookId=${bookId}` : null,
         fetcher
     );
-    const comments = (commentsData as { comments: Comment[] })?.comments || [];
+    const comments = (commentsData as { comments: CommentType[] })?.comments || [];
     const { upvote, downvote, hasVoted, voteType, isLoading: votingLoading } = useVoting(parseInt(bookId));
+    
+    // Calculate total comment count including replies
+    const totalCommentCount = comments.reduce((total, comment) => {
+        return total + 1 + (comment.replies?.length || 0);
+    }, 0);
     
     const [isSubmittingComment, setIsSubmittingComment] = useState(false);
     const [newComment, setNewComment] = useState("");
@@ -229,7 +235,7 @@ export default function BookPage() {
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <MessageCircle className="h-5 w-5" />
-                                    Comments ({comments.length || 0})
+                                    Comments ({totalCommentCount || 0})
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-6">
@@ -263,25 +269,12 @@ export default function BookPage() {
                                 {/* Comments List */}
                                 <div className="space-y-4">
                                     {comments && comments.length > 0 ? (
-                                        comments.map((comment: Comment) => (
-                                            <div key={comment.id} className="bg-muted/50 rounded-lg p-4">
-                                                <div className="flex items-start gap-3">
-                                                    <div className="bg-primary/10 rounded-full p-2 flex-shrink-0">
-                                                        <User className="h-4 w-4 text-primary" />
-                                                    </div>
-                                                    <div className="flex-1">
-                                                        <div className="flex items-center gap-2 mb-2">
-                                                            <span className="font-medium text-sm">
-                                                                {comment.authorName || "Anonymous"}
-                                                            </span>
-                                                            <span className="text-xs text-muted-foreground">
-                                                                {new Date(comment.createdAt).toLocaleDateString()}
-                                                            </span>
-                                                        </div>
-                                                        <p className="text-sm leading-relaxed">{comment.content}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                        comments.map((comment) => (
+                                            <Comment 
+                                                key={comment.id} 
+                                                comment={comment} 
+                                                bookId={bookId} 
+                                            />
                                         ))
                                     ) : (
                                         <div className="text-center py-8 text-muted-foreground">
