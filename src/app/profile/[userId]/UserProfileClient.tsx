@@ -10,6 +10,7 @@ import { User, BookOpen, ThumbsUp, MessageCircle, Calendar, ArrowLeft } from "lu
 import { GoogleBookCard } from "@/components/features/GoogleBookCard";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { safeDateToISOString } from "@/utils/date";
 
 interface UserProfileClientProps {
   params: Promise<{ userId: string }>;
@@ -222,27 +223,31 @@ export default function UserProfileClient({ params }: UserProfileClientProps) {
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {userData.books.map((book) => (
-                      <GoogleBookCard
-                        key={book.id}
-                        book={{
-                          id: book.id,
-                          name: book.name,
-                          url: book.url,
-                          posterUrl: book.posterUrl,
-                          summary: book.summary,
-                          genre: book.genre,
-                          userId: userData.id,
-                          createdAt: new Date(book.createdAt).toISOString(),
-                          updatedAt: new Date(book.createdAt).toISOString(),
-                          upvotes: book.upvotes,
-                          downvotes: book.downvotes,
-                          comments: [],
-                          authorName: userData.name,
-                        }}
-                        compact={true}
-                      />
-                    ))}
+                    {userData.books.map((book) => {
+                      const createdAtString = safeDateToISOString(book.createdAt);
+
+                      return (
+                        <GoogleBookCard
+                          key={book.id}
+                          book={{
+                            id: book.id,
+                            name: book.name,
+                            url: book.url,
+                            posterUrl: book.posterUrl,
+                            summary: book.summary,
+                            genre: book.genre,
+                            userId: userData.id,
+                            createdAt: createdAtString,
+                            updatedAt: createdAtString,
+                            upvotes: book.upvotes,
+                            downvotes: book.downvotes,
+                            comments: [],
+                            authorName: userData.name,
+                          }}
+                          compact={true}
+                        />
+                      );
+                    })}
                   </div>
                 )}
               </CardContent>

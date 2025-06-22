@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { MessageCircle, ExternalLink, ThumbsUp, ThumbsDown, Loader2, Star } from "lucide-react";
 import { Book } from "@/types";
 import { formatDistanceToNow } from "date-fns";
+import { safeDate } from "@/utils/date";
 import { useVoting } from "@/hooks/useVoting";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -85,7 +86,13 @@ export function BookCard({ book, onComment, onVoteSuccess }: BookCardProps) {
               {book.genre}
             </Badge>
             <span className="text-xs text-muted-foreground">
-              {formatDistanceToNow(new Date(book.createdAt), { addSuffix: true })}
+              {(() => {
+                try {
+                  return formatDistanceToNow(safeDate(book.createdAt), { addSuffix: true });
+                } catch {
+                  return 'Recently';
+                }
+              })()}
             </span>
           </div>
 

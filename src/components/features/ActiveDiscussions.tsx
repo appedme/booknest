@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { MessageCircle, ArrowRight, Clock, ThumbsUp } from "lucide-react";
 import { Book } from "@/types";
 import { formatDistanceToNow } from "date-fns";
+import { safeDate } from "@/utils/date";
 import Link from "next/link";
 
 interface ActiveDiscussionsProps {
@@ -60,7 +61,13 @@ export function ActiveDiscussions({ books }: ActiveDiscussionsProps) {
                     </Badge>
                     <div className="flex items-center gap-1 text-muted-foreground text-xs">
                       <Clock className="h-3 w-3" />
-                      {formatDistanceToNow(new Date(book.createdAt), { addSuffix: true })}
+                      {(() => {
+                        try {
+                          return formatDistanceToNow(safeDate(book.createdAt), { addSuffix: true });
+                        } catch {
+                          return 'Recently';
+                        }
+                      })()}
                     </div>
                   </div>
 

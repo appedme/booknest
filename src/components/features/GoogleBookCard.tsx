@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Book } from "@/types";
+import { safeDateToLocaleString } from "@/utils/date";
 
 interface GoogleBookCardProps {
   book: Book;
@@ -181,7 +182,7 @@ export function GoogleBookCard({ book, onVote, compact = false }: GoogleBookCard
           </div>
 
           <div className="text-xs" style={{ color: 'var(--google-text-secondary)' }}>
-            {new Date(book.createdAt).toLocaleDateString('en-US', {
+            {safeDateToLocaleString(book.createdAt, 'en-US', {
               month: 'short',
               year: 'numeric'
             })}
