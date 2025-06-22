@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import { BOOK_GENRES } from "@/constants/books";
 import { BookFormData } from "@/types";
-import { BookOpen, Loader2, Upload, Link as LinkIcon, Image, FileText, Tag } from "lucide-react";
+import { BookOpen, Loader2, Upload, Link as LinkIcon, Image as ImageIcon, FileText, Tag } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { createBook, validateBookData } from "@/utils/books";
 import { requireAuth } from "@/utils/auth";
@@ -148,7 +148,7 @@ export function AddBookForm({ onBookAdded, redirectToDashboard = false }: AddBoo
         {/* Cover Image URL */}
         <div className="md:col-span-2 space-y-2">
           <Label htmlFor="posterUrl" className="flex items-center gap-2 text-sm font-medium text-gray-900">
-            <Image className="h-4 w-4 text-purple-600" />
+            <ImageIcon className="h-4 w-4 text-purple-600" />
             Cover Image URL
             <span className="text-red-500">*</span>
           </Label>

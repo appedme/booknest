@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { BookCard } from "./BookCard";
+import { GoogleBookCard } from "./GoogleBookCard";
 import { Button } from "@/components/ui/button";
 import { TrendingUp, ArrowRight } from "lucide-react";
 import { Book } from "@/types";
@@ -55,7 +55,10 @@ export function TrendingBooks({ books, onVoteSuccess, onComment }: TrendingBooks
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              <BookCard book={book} onVoteSuccess={onVoteSuccess} onComment={onComment} />
+              <GoogleBookCard book={book} onVote={(bookId, type) => {
+                // Handle vote callback
+                onVoteSuccess?.();
+              }} />
             </motion.div>
           ))}
         </div>

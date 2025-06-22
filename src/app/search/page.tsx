@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { BookCard } from '@/components/features/BookCard';
+import { motion } from 'framer-motion';
+import { GoogleBookCard } from '@/components/features/GoogleBookCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,11 +16,15 @@ import {
   List,
   SlidersHorizontal,
   X,
-  ArrowRight
+  ArrowRight,
+  Filter,
+  Loader2
 } from 'lucide-react';
 import { useBooks } from '@/hooks/useBooks';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { GENRES } from '@/lib/schema';
+import { cn } from '@/lib/utils';
 
 type SortOption = 'relevance' | 'trending' | 'recent' | 'popular' | 'title' | 'votes';
 type ViewMode = 'grid' | 'list';
@@ -131,14 +135,14 @@ export default function SearchPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
         <div className="container py-8 space-y-8">
           <div className="text-center py-16 space-y-6">
-            <div className="h-12 bg-muted/50 rounded-lg w-96 mx-auto animate-pulse"></div>
+            <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
             <div className="h-6 bg-muted/50 rounded w-64 mx-auto animate-pulse"></div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {Array(8).fill(0).map((_, i) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+            {Array(12).fill(0).map((_, i) => (
               <div key={i} className="h-96 bg-muted/50 rounded-lg animate-pulse"></div>
             ))}
           </div>
@@ -149,7 +153,7 @@ export default function SearchPage() {
 
   if (isError) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
         <div className="container py-16">
           <div className="text-center max-w-md mx-auto">
             <div className="bg-destructive/10 rounded-full p-6 w-20 h-20 mx-auto mb-6">
@@ -167,7 +171,7 @@ export default function SearchPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
       <div className="container mx-auto px-4 py-6">
         {/* Header */}
         <motion.div
@@ -184,275 +188,151 @@ export default function SearchPage() {
               </Button>
             </Link>
           </div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
-            Advanced Search
-          </h1>
-          <p className="text-muted-foreground">
-            Find exactly what you're looking for with our powerful search filters
-          </p>
-        </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Filters Sidebar */}
-          <div className="lg:col-span-1">
-            <Card className="sticky top-24">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <SlidersHorizontal className="h-5 w-5" />
-                    Filters
-                  </CardTitle>
-                  {activeFiltersCount > 0 && (
-                    <Button variant="ghost" size="sm" onClick={clearFilters}>
-                      <X className="h-4 w-4 mr-1" />
-                      Clear ({activeFiltersCount})
-                    </Button>
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Search */}
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Search Query</label>
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Search books, authors, genres..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* Genre Filter */}
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Genre</label>
-                  <Select value={selectedGenre} onValueChange={setSelectedGenre}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="All genres" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="">All genres</SelectItem>
-                      {genres.map((genre) => (
-                        <SelectItem key={genre} value={genre}>
-                          {genre}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <Separator />
-
-                {/* Sort By */}
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Sort By</label>
-                  <Select value={sortBy} onValueChange={(value: SortOption) => setSortBy(value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="relevance">Relevance</SelectItem>
-                      <SelectItem value="trending">Trending</SelectItem>
-                      <SelectItem value="recent">Most Recent</SelectItem>
-                      <SelectItem value="popular">Most Popular</SelectItem>
-                      <SelectItem value="votes">Most Voted</SelectItem>
-                      <SelectItem value="title">Title (A-Z)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <Separator />
-
-                {/* Date Range */}
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Date Range</label>
-                  <Select value={dateRange} onValueChange={setDateRange}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="All time" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="">All time</SelectItem>
-                      <SelectItem value="day">Last 24 hours</SelectItem>
-                      <SelectItem value="week">Last week</SelectItem>
-                      <SelectItem value="month">Last month</SelectItem>
-                      <SelectItem value="year">Last year</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <Separator />
-
-                {/* Min Votes */}
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Minimum Votes</label>
-                  <Input
-                    type="number"
-                    placeholder="0"
-                    value={minVotes}
-                    onChange={(e) => setMinVotes(e.target.value)}
-                    min="0"
-                  />
-                </div>
-
-                {/* Min Comments */}
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Minimum Comments</label>
-                  <Input
-                    type="number"
-                    placeholder="0"
-                    value={minComments}
-                    onChange={(e) => setMinComments(e.target.value)}
-                    min="0"
-                  />
-                </div>
-              </CardContent>
-            </Card>
+          <div className="flex items-center gap-4 mb-6">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Search Books
+            </h1>
+            <Badge variant="secondary" className="px-3 py-1">
+              {filteredBooks.length} books
+            </Badge>
           </div>
 
-          {/* Results */}
-          <div className="lg:col-span-3">
-            {/* Results Header */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="flex items-center justify-between mb-6"
-            >
-              <div>
-                <h2 className="text-xl font-semibold text-foreground">
-                  {searchQuery ? `Results for "${searchQuery}"` : 'All Books'}
-                </h2>
-                <p className="text-muted-foreground">
-                  {filteredBooks.length} book{filteredBooks.length !== 1 ? 's' : ''} found
-                </p>
+          {/* Search and Filters */}
+          <Card className="p-6 bg-white/50 backdrop-blur-sm border border-white/20">
+            <div className="space-y-4">
+              {/* Search Input */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Input
+                  placeholder="Search by title, author, or genre..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 bg-white/70 border-gray-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20"
+                />
               </div>
 
-              {/* View Toggle */}
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">View:</span>
-                <div className="flex items-center border rounded-lg p-1">
-                  <Button
-                    variant={viewMode === 'grid' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setViewMode('grid')}
-                    className="h-8 px-3"
-                  >
-                    <Grid3X3 className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant={viewMode === 'list' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setViewMode('list')}
-                    className="h-8 px-3"
-                  >
-                    <List className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Active Filters */}
-            {activeFiltersCount > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="mb-6"
-              >
+              {/* Active Filters Display */}
+              {activeFiltersCount > 0 && (
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-sm text-muted-foreground">Active filters:</span>
+                  <span className="text-sm text-gray-600">Filters:</span>
                   {searchQuery && (
-                    <Badge variant="secondary" className="flex items-center gap-1">
+                    <Badge variant="secondary" className="gap-1">
                       Search: {searchQuery}
                       <X className="h-3 w-3 cursor-pointer" onClick={() => setSearchQuery("")} />
                     </Badge>
                   )}
                   {selectedGenre && (
-                    <Badge variant="secondary" className="flex items-center gap-1">
+                    <Badge variant="secondary" className="gap-1">
                       Genre: {selectedGenre}
                       <X className="h-3 w-3 cursor-pointer" onClick={() => setSelectedGenre("")} />
                     </Badge>
                   )}
-                  {minVotes && (
-                    <Badge variant="secondary" className="flex items-center gap-1">
-                      Min votes: {minVotes}
-                      <X className="h-3 w-3 cursor-pointer" onClick={() => setMinVotes("")} />
-                    </Badge>
-                  )}
-                  {minComments && (
-                    <Badge variant="secondary" className="flex items-center gap-1">
-                      Min comments: {minComments}
-                      <X className="h-3 w-3 cursor-pointer" onClick={() => setMinComments("")} />
-                    </Badge>
-                  )}
-                  {dateRange && (
-                    <Badge variant="secondary" className="flex items-center gap-1">
-                      {dateRange === 'day' ? 'Last 24h' : dateRange === 'week' ? 'Last week' : dateRange === 'month' ? 'Last month' : 'Last year'}
-                      <X className="h-3 w-3 cursor-pointer" onClick={() => setDateRange("")} />
-                    </Badge>
-                  )}
-                  <Button variant="ghost" size="sm" onClick={clearFilters}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={clearFilters}
+                    className="h-7 px-2 text-blue-600 hover:text-blue-700"
+                  >
                     Clear all
                   </Button>
                 </div>
-              </motion.div>
-            )}
+              )}
 
-            {/* Results Grid */}
-            <AnimatePresence mode="wait">
-              {filteredBooks.length > 0 ? (
+              <Separator />
+
+              {/* Filter Controls */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <Select value={selectedGenre} onValueChange={setSelectedGenre}>
+                  <SelectTrigger className="bg-white/70">
+                    <SelectValue placeholder="All Genres" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">All Genres</SelectItem>
+                    {genres.map(genre => (
+                      <SelectItem key={genre} value={genre}>{genre}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select value={sortBy} onValueChange={(value: SortOption) => setSortBy(value)}>
+                  <SelectTrigger className="bg-white/70">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="relevance">Most Relevant</SelectItem>
+                    <SelectItem value="trending">Trending</SelectItem>
+                    <SelectItem value="recent">Most Recent</SelectItem>
+                    <SelectItem value="popular">Most Popular</SelectItem>
+                    <SelectItem value="title">Title A-Z</SelectItem>
+                    <SelectItem value="votes">Most Votes</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <div className="flex gap-2">
+                  <Button
+                    variant={viewMode === 'grid' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setViewMode('grid')}
+                    className="flex-1"
+                  >
+                    <Grid3X3 className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant={viewMode === 'list' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setViewMode('list')}
+                    className="flex-1"
+                  >
+                    <List className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </motion.div>
+
+        {/* Results */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          {filteredBooks.length === 0 ? (
+            <div className="text-center py-16">
+              <BookOpen className="h-16 w-16 text-gray-300 mx-auto mb-6" />
+              <h3 className="text-2xl font-semibold text-gray-800 mb-4">No books found</h3>
+              <p className="text-gray-600 mb-8">
+                {searchQuery || selectedGenre || minVotes || minComments || dateRange
+                  ? "Try adjusting your search criteria or filters."
+                  : "No books available at the moment."}
+              </p>
+              {activeFiltersCount > 0 && (
+                <Button onClick={clearFilters} variant="outline">
+                  Clear Filters
+                </Button>
+              )}
+            </div>
+          ) : (
+            <div className={cn(
+              "grid gap-6",
+              viewMode === 'grid'
+                ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+                : "grid-cols-1"
+            )}>
+              {filteredBooks.map((book, index) => (
                 <motion.div
-                  key="results"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className={viewMode === 'grid'
-                    ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
-                    : "space-y-4"
-                  }
-                >
-                  {filteredBooks.map((book, index) => (
-                    <motion.div
-                      key={book.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: index * 0.05 }}
-                    >
-                      <BookCard
-                        book={book}
-                        onVoteSuccess={() => mutate()}
-                        onComment={(bookId) => router.push(`/books/${bookId}#comments`)}
-                      />
-                    </motion.div>
-                  ))}
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="no-results"
+                  key={book.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-center py-16"
+                  transition={{ duration: 0.5, delay: index * 0.05 }}
                 >
-                  <div className="bg-muted rounded-full p-6 w-20 h-20 mx-auto mb-6">
-                    <Search className="h-8 w-8 text-muted-foreground mx-auto" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-foreground mb-2">No books found</h3>
-                  <p className="text-muted-foreground mb-6">
-                    Try adjusting your search criteria or clear some filters
-                  </p>
-                  <Button variant="outline" onClick={clearFilters}>
-                    Clear all filters
-                  </Button>
+                  <GoogleBookCard book={book} />
                 </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
+              ))}
+            </div>
+          )}
+        </motion.div>
       </div>
     </div>
   );

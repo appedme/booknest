@@ -88,9 +88,11 @@ p {
   padding: 8px;
   width: 100%;
   max-width: 180px;
+  min-height: 400px;
   height: auto;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
 }
 
 .google-book-card:hover {

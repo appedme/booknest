@@ -1,27 +1,65 @@
 import { drizzle } from "drizzle-orm/d1";
 import * as schema from "./schema";
+import path from "path";
 
 export async function getDB() {
   try {
-    // Dynamic import for Cloudflare context to avoid build issues
+    // In development or when LIBSQL_URL is set, use libsql client with dynamic import
+    if (process.env.NODE_ENV === 'development' || process.env.LIBSQL_URL) {
+      const [{ drizzle: drizzleLibSQL }, { createClient }] = await Promise.all([
+        import("drizzle-orm/libsql"),
+        import("@libsql/client")
+      ]);
+      
+      const dbPath = process.env.LIBSQL_URL || `file:${path.join(process.cwd(), 'local.db')}`;
+      const client = createClient({
+        url: dbPath,
+        authToken: process.env.LIBSQL_AUTH_TOKEN
+      });
+      return drizzleLibSQL(client, { schema });
+    }
+
+    // In production (Cloudflare), use D1 directly
     const { getCloudflareContext } = await import("@opennextjs/cloudflare");
-    const context = getCloudflareContext();
+    const context = await getCloudflareContext({ async: true });
     return drizzle(context.env.DB, { schema });
   } catch (error) {
-    console.warn('Cloudflare context not available - this is expected during build time');
-    // Return a mock database for build time
-    return null;
+    console.warn('Database connection failed:', error);
+    
+    // Fallback to local database if available
+    try {
+      const [{ drizzle: drizzleLibSQL }, { createClient }] = await Promise.all([
+        import("drizzle-orm/libsql"),
+        import("@libsql/client")
+      ]);
+      
+      const dbPath = path.join(process.cwd(), 'local.db');
+      const client = createClient({
+        url: `file:${dbPath}`
+      });
+      return drizzleLibSQL(client, { schema });
+    } catch (fallbackError) {
+      console.error('Fallback database connection also failed:', fallbackError);
+      return null;
+    }
   }
 }
 
-// For sync usage, we'll create a simple wrapper
+// For sync usage during build time, avoid Cloudflare context entirely
 export function getDBSync() {
   try {
-    const { getCloudflareContext } = require("@opennextjs/cloudflare");
-    const context = getCloudflareContext();
-    return drizzle(context.env.DB, { schema });
+    // Always use local SQLite database for sync calls to avoid Cloudflare context issues
+    // Use require for sync loading in build context
+    const { drizzle: drizzleLibSQL } = require("drizzle-orm/libsql");
+    const { createClient } = require("@libsql/client");
+    
+    const dbPath = path.join(process.cwd(), 'local.db');
+    const client = createClient({
+      url: `file:${dbPath}`
+    });
+    return drizzleLibSQL(client, { schema });
   } catch (error) {
-    console.warn('Cloudflare context not available - this is expected during build time');
+    console.warn('Database connection failed:', error);
     return null;
   }
 }

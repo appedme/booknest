@@ -61,6 +61,35 @@ export interface Vote {
   createdAt: string;
 }
 
+// Review related types
+export interface Review {
+  id: number;
+  bookId: number;
+  userId: string | null;
+  authorName: string | null;
+  rating: number; // 1-5 stars
+  title: string | null;
+  content: string;
+  isVerifiedPurchase: boolean;
+  helpfulCount: number;
+  createdAt: string;
+  updatedAt: string;
+  isHelpful?: boolean; // Whether current user marked as helpful
+}
+
+export interface BookRating {
+  id: number;
+  bookId: number;
+  averageRating: number; // Decimal value (e.g., 4.2)
+  totalReviews: number;
+  fiveStars: number;
+  fourStars: number;
+  threeStars: number;
+  twoStars: number;
+  oneStar: number;
+  updatedAt: string;
+}
+
 // Form types
 export interface BookFormData {
   name: string;
@@ -71,6 +100,13 @@ export interface BookFormData {
 }
 
 export interface CommentFormData {
+  content: string;
+  authorName?: string;
+}
+
+export interface ReviewFormData {
+  rating: number;
+  title?: string;
   content: string;
   authorName?: string;
 }

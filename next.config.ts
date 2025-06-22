@@ -9,7 +9,9 @@ const nextConfig: NextConfig = {
         hostname: '**',
       },
     ],
-  }
+  },
+  // Mark @libsql/client as external to avoid bundling in production
+  serverExternalPackages: ['@libsql/client', '@libsql/isomorphic-ws']
 };
 
 export default nextConfig;
