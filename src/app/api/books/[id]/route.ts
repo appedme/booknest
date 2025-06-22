@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDB } from "@/lib/db";
-import { books, votes, comments } from "@/lib/schema";
+import { books, votes, comments, users } from "@/lib/schema";
 import { eq, and, desc } from "drizzle-orm";
 
 // GET individual book with details
@@ -22,9 +22,11 @@ export async function GET(
       return NextResponse.json({ error: "Database not available" }, { status: 500 });
     }
 
-    // Get book details
-    const bookResult = await db.select()
+    // Get book details with author information
+    const bookResult = await db
+      .select()
       .from(books)
+      .leftJoin(users, eq(books.userId, users.id))
       .where(eq(books.id, bookId));
 
     if (bookResult.length === 0) {
@@ -32,6 +34,14 @@ export async function GET(
     }
 
     const book = bookResult[0];
+
+    // Add author information to the book object
+    const bookWithAuthor = {
+      ...book.books,
+      authorName: book.user?.name || null,
+      authorEmail: book.user?.email || null,
+      authorImage: book.user?.image || null,
+    };
 
     // Get vote counts
     const upvoteResults = await db.select()
@@ -49,7 +59,7 @@ export async function GET(
       .orderBy(desc(comments.createdAt));
 
     const bookWithDetails = {
-      ...book,
+      ...bookWithAuthor,
       upvotes: upvoteResults.length,
       downvotes: downvoteResults.length,
       comments: bookComments,
@@ -59,6 +69,73 @@ export async function GET(
   } catch (error) {
     console.error("Error fetching book:", error);
     return NextResponse.json({ error: "Failed to fetch book" }, { status: 500 });
+  }
+}
+
+// PUT update book (for book authors)
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const bookId = parseInt(id);
+
+    if (isNaN(bookId)) {
+      return NextResponse.json({ error: "Invalid book ID" }, { status: 400 });
+    }
+
+    const body = await request.json();
+    const { name, url, posterUrl, summary, genre } = body as {
+      name: string;
+      url: string;
+      posterUrl?: string;
+      summary?: string;
+      genre: string;
+    };
+
+    if (!name || !url || !genre) {
+      return NextResponse.json(
+        { error: "Name, URL, and genre are required" },
+        { status: 400 }
+      );
+    }
+
+    const db = await getDB();
+    
+    if (!db) {
+      return NextResponse.json({ error: "Database not available" }, { status: 500 });
+    }
+
+    // Check if book exists
+    const existingBook = await db
+      .select()
+      .from(books)
+      .where(eq(books.id, bookId))
+      .limit(1);
+
+    if (existingBook.length === 0) {
+      return NextResponse.json({ error: "Book not found" }, { status: 404 });
+    }
+
+    // Update the book
+    const updatedBook = await db
+      .update(books)
+      .set({
+        name,
+        url,
+        posterUrl: posterUrl || null,
+        summary: summary || null,
+        genre,
+        updatedAt: new Date(),
+      })
+      .where(eq(books.id, bookId))
+      .returning();
+
+    return NextResponse.json(updatedBook[0]);
+  } catch (error) {
+    console.error("Error updating book:", error);
+    return NextResponse.json({ error: "Failed to update book" }, { status: 500 });
   }
 }
 
