@@ -23,11 +23,11 @@ export const ANIMATIONS = {
  * CSS class constants for consistent styling
  */
 export const STYLES = {
-  GRADIENT_BG: "min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30",
-  HERO_BG: "relative bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 overflow-hidden",
-  CARD_BG: "border-0 shadow-lg bg-white/70 backdrop-blur-sm",
-  BUTTON_PRIMARY: "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white",
-  GLASS_EFFECT: "bg-white/10 backdrop-blur-sm border border-white/20",
+  GRADIENT_BG: "min-h-screen bg-gray-50 dark:bg-gray-900",
+  HERO_BG: "relative bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700",
+  CARD_BG: "border border-gray-200 dark:border-gray-700 shadow-sm bg-white dark:bg-gray-800",
+  BUTTON_PRIMARY: "bg-blue-600 hover:bg-blue-700 text-white",
+  GLASS_EFFECT: "bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700",
 } as const;
 
 /**

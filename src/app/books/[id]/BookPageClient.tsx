@@ -94,14 +94,14 @@ export default function BookPageClient({ params }: BookPageClientProps) {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
             {/* Back Button and Edit Button */}
             <div className="container mx-auto px-6 pt-6">
                 <div className="flex justify-between items-center mb-4">
                     <Link href="/">
                         <Button 
                             variant="ghost" 
-                            className="text-white hover:bg-white/10"
+                            className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                         >
                             <ArrowLeft className="mr-2 h-4 w-4" />
                             Back to Home
@@ -113,7 +113,7 @@ export default function BookPageClient({ params }: BookPageClientProps) {
                         <Link href={`/books/${bookId}/edit`}>
                             <Button 
                                 variant="outline" 
-                                className="text-white border-white/20 hover:bg-white/10"
+                                className="text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800"
                             >
                                 <Edit className="mr-2 h-4 w-4" />
                                 Edit Book
@@ -147,16 +147,22 @@ export default function BookPageClient({ params }: BookPageClientProps) {
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2"
+                            className="flex items-center space-x-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 shadow-sm"
                         >
-                            <User className="h-4 w-4 text-purple-400" />
-                            <span className="text-gray-300">by</span>
-                            <Link 
-                                href={`/profile/${book.userId}`}
-                                className="text-white font-medium hover:text-purple-300 transition-colors"
-                            >
-                                {book.authorName}
-                            </Link>
+                            <User className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                            <span className="text-gray-600 dark:text-gray-400">by</span>
+                            {book.authorUsername ? (
+                                <Link 
+                                    href={`/u/${book.authorUsername}`}
+                                    className="text-gray-900 dark:text-gray-100 font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                                >
+                                    {book.authorName}
+                                </Link>
+                            ) : (
+                                <span className="text-gray-900 dark:text-gray-100 font-medium">
+                                    {book.authorName}
+                                </span>
+                            )}
                         </motion.div>
                     </div>
                 </div>

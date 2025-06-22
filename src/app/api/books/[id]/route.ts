@@ -39,6 +39,7 @@ export async function GET(
     const bookWithAuthor = {
       ...book.books,
       authorName: book.user?.name || null,
+      authorUsername: book.user?.username || null,
       authorEmail: book.user?.email || null,
       authorImage: book.user?.image || null,
     };

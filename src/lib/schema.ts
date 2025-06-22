@@ -5,6 +5,7 @@ import type { AdapterAccount } from "@auth/core/adapters";
 export const users = sqliteTable("user", {
   id: text("id").notNull().primaryKey(),
   name: text("name"),
+  username: text("username").unique(),
   email: text("email").notNull(),
   emailVerified: integer("emailVerified", { mode: "timestamp_ms" }),
   image: text("image"),

@@ -2,6 +2,7 @@
 export interface User {
   id: string;
   name?: string | null;
+  username?: string | null;
   email?: string | null;
   image?: string | null;
   createdAt?: string;
@@ -23,6 +24,7 @@ export interface Book {
   genre: string;
   userId: string | null;
   authorName?: string | null;
+  authorUsername?: string | null;
   authorImage?: string | null;
   createdAt: string;
   updatedAt: string;

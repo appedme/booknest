@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDB } from "@/lib/db";
-import { books, votes, comments, GENRES } from "@/lib/schema";
+import { books, users, votes, comments, GENRES } from "@/lib/schema";
 import { desc, eq, sql, and } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import type { User } from "@/types";
@@ -31,18 +31,20 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Base query
-    let allBooks;
+    // Base query with user information
+    let allBooksWithUsers;
     if (conditions.length > 0) {
-      allBooks = await db.select()
+      allBooksWithUsers = await db.select()
         .from(books)
+        .leftJoin(users, eq(books.userId, users.id))
         .where(and(...conditions))
         .orderBy(desc(books.createdAt))
         .limit(limit)
         .offset(offset);
     } else {
-      allBooks = await db.select()
+      allBooksWithUsers = await db.select()
         .from(books)
+        .leftJoin(users, eq(books.userId, users.id))
         .orderBy(desc(books.createdAt))
         .limit(limit)
         .offset(offset);
@@ -50,7 +52,10 @@ export async function GET(request: NextRequest) {
 
     // Get vote counts for each book
     const booksWithVotes = await Promise.all(
-      allBooks.map(async (book) => {
+      allBooksWithUsers.map(async (result) => {
+        const book = result.books;
+        const user = result.user;
+        
         const upvoteCount = await db.select()
           .from(votes)
           .where(and(eq(votes.bookId, book.id), eq(votes.voteType, "upvote")));
@@ -65,6 +70,9 @@ export async function GET(request: NextRequest) {
 
         return {
           ...book,
+          authorName: user?.name || null,
+          authorUsername: user?.username || null,
+          authorImage: user?.image || null,
           upvotes: upvoteCount.length,
           downvotes: downvoteCount.length,
           comments: bookComments,
@@ -77,7 +85,7 @@ export async function GET(request: NextRequest) {
       pagination: {
         limit,
         offset,
-        hasMore: allBooks.length === limit
+        hasMore: allBooksWithUsers.length === limit
       }
     });
   } catch (error) {

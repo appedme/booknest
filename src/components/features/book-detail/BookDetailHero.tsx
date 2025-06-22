@@ -35,8 +35,6 @@ export function BookDetailHero({
   };
   return (
     <div className={STYLES.HERO_BG}>
-      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10"></div>
       
       <div className="relative container mx-auto px-6 py-12">
         {/* Navigation */}
@@ -47,7 +45,7 @@ export function BookDetailHero({
         >
           <Link 
             href="/" 
-            className="inline-flex items-center text-slate-300 hover:text-white transition-all duration-300 group"
+            className="inline-flex items-center text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-all duration-300 group"
           >
             <ArrowLeft className="h-5 w-5 mr-2 group-hover:-translate-x-1 transition-transform duration-300" />
             <span className="font-medium">Back to Books</span>

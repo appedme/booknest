@@ -127,13 +127,25 @@ export function GoogleBookCard({ book, onVote, compact = false }: GoogleBookCard
       </Link>
 
       {/* Author */}
-      <p
-        className="text-xs leading-tight line-clamp-1"
-        style={{ color: 'var(--google-text-secondary)' }}
-        title={formatAuthor(book.authorName)}
-      >
-        {formatAuthor(book.authorName)}
-      </p>
+      {book.authorUsername ? (
+        <Link href={`/u/${book.authorUsername}`}>
+          <p
+            className="text-xs leading-tight line-clamp-1 hover:text-blue-600 hover:underline cursor-pointer"
+            style={{ color: 'var(--google-text-secondary)' }}
+            title={formatAuthor(book.authorName)}
+          >
+            {formatAuthor(book.authorName)}
+          </p>
+        </Link>
+      ) : (
+        <p
+          className="text-xs leading-tight line-clamp-1"
+          style={{ color: 'var(--google-text-secondary)' }}
+          title={formatAuthor(book.authorName)}
+        >
+          {formatAuthor(book.authorName)}
+        </p>
+      )}
 
       {/* Genre Badge and Rating */}
       <div className="flex items-center justify-between">
